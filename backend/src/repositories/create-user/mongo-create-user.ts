@@ -3,14 +3,16 @@ import { CreateUserParams, ICreateUserRepository } from "../../controllers/creat
 import { MongoClient } from "../../database/mongo";
 import { User } from "../../models/user";
 
-export class MongoCreateUser implements ICreateUserRepository {
+export class MongoCreateUserRepository implements ICreateUserRepository {
   async createUser(params: CreateUserParams): Promise<User> {
+    const userParams = { ...params, creation_date: new Date() }
+
     const { insertedId } = await MongoClient.db.
       collection("users").
-      insertOne(params);
+      insertOne(userParams);
 
     const createdUser = await MongoClient.db.
-      collection("users").
+      collection<Omit<User, "id">>("users").
       findOne({ _id: insertedId });
 
     if (!createdUser) {
