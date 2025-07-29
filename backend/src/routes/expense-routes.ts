@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { MongoCreateExpenseRepository } from "../repositories/create-expense/mongo-create-expense";
-import { CreateExpenseController } from "../controllers/create-expense/create-expense";
-import { MongoGetExpensesRepository } from "../repositories/get-expenses/mongo-get-expenses";
-import { GetExpensesController } from "../controllers/get-expenses/get-expenses";
-import { MongoUpdateExpenseRepository } from "../repositories/update-expense/mongo-update-expense";
-import { UpdateExpenseController } from "../controllers/update-expense/update-expense";
-import { MongoDeleteExpenseRepository } from "../repositories/delete-expenses/mongo-delete-expenses";
-import { DeleteExpenseController } from "../controllers/delete-expense/delete-expense";
+import { MongoCreateExpenseRepository } from "../repositories/create/create-expense/mongo-create-expense";
+import { CreateExpenseController } from "../controllers/create/create-expense/create-expense";
+import { MongoGetExpensesRepository } from "../repositories/get/get-expenses/mongo-get-expenses";
+import { GetExpensesController } from "../controllers/get/get-expenses/get-expenses";
+import { MongoUpdateExpenseRepository } from "../repositories/update/update-expense/mongo-update-expense";
+import { UpdateExpenseController } from "../controllers/update/update-expense/update-expense";
+import { MongoDeleteExpenseRepository } from "../repositories/delete/delete-expenses/mongo-delete-expenses";
+import { DeleteExpenseController } from "../controllers/delete/delete-expense/delete-expense";
 
 const router = Router();
 
