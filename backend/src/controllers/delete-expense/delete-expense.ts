@@ -11,10 +11,10 @@ export class DeleteExpenseController implements IController {
       const id = httpRequest?.params?.id;
 
       if (!id) {
-        return badRequest("Missing user id.");
+        return badRequest("Missing expense id.");
       }
 
-      const expense = await this.deleteExpenseRepository.deleteUser(id);
+      const expense = await this.deleteExpenseRepository.deleteExpense(id);
 
       return ok<Expense>(expense);
     } catch (error) {

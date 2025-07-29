@@ -5,7 +5,7 @@ import { Expense } from "../../models/expense";
 import { MongoExpense } from "../mongo-protocols";
 
 export class MongoDeleteExpenseRepository implements IDeleteExpenseRepository {
-  async deleteUser(id: string): Promise<Expense> {
+  async deleteExpense(id: string): Promise<Expense> {
     const mongoId = new ObjectId(id);
 
     const expense = await MongoClient.db.
