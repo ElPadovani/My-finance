@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 import { MongoClient } from "../../database/mongo";
 import { User } from "../../models/user";
 import { IUpdateUserRepository, UpdateUserParams } from "../../controllers/update-user/protocols";
+import { MongoUser } from "../mongo-protocols";
 
 export class MongoUpdateUserRepository implements IUpdateUserRepository {
   async updateUser(id:string, params: UpdateUserParams): Promise<User> {
@@ -16,7 +17,7 @@ export class MongoUpdateUserRepository implements IUpdateUserRepository {
       });
 
     const updatedUser = await MongoClient.db.
-      collection<Omit<User, "id">>("users").
+      collection<MongoUser>("users").
       findOne({ _id: new ObjectId(id) });
 
     if (!updatedUser) {
