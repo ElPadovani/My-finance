@@ -6,7 +6,7 @@ import { MongoGetExpensesRepository } from "../repositories/get-expenses/mongo-g
 
 const router = Router();
 
-router.get("/users", async (req, res) => {
+router.get("/expenses", async (req, res) => {
   const mongoGetExpensesRepository = new MongoGetExpensesRepository();
 
   const getExpensesController = new GetExpensesController(mongoGetExpensesRepository);
