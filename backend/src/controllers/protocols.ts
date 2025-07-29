@@ -17,5 +17,5 @@ export enum HttpsStatusCode {
 };
 
 export interface IController {
-  handle(HttpRequest: HttpRequest<unknown>): Promise<HttpResponse<unknown>>; 
+  handle(httpRequest: HttpRequest<unknown>): Promise<HttpResponse<unknown>>; 
 };
