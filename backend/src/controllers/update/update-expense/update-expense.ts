@@ -1,6 +1,6 @@
-import { Expense } from "../../models/expense";
-import { badRequest, ok, serverError } from "../helpers";
-import { HttpRequest, HttpResponse, IController } from "../protocols";
+import { Expense } from "../../../models/expense";
+import { badRequest, ok, serverError } from "../../helpers";
+import { HttpRequest, HttpResponse, IController } from "../../protocols";
 import { IUpdateExpenseRepository, UpdateExpenseParams } from "./protocols";
 
 export class UpdateExpenseController implements IController {
