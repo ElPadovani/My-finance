@@ -5,7 +5,7 @@ export interface CreateExpenseParams {
   description: string;
   value: number;
   category: string;
-  expense_date: Date;
+  expense_date: string;
 };
 
 export interface ICreateExpenseRepository {
