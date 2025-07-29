@@ -1,30 +1,47 @@
-import { ObjectId } from "mongodb";
-import { MongoClient } from "../../database/mongo";
 import { User } from "../../models/user";
-import { IUpdateUserRepository, UpdateUserParams } from "./protocols";
+import { HttpRequest, HttpResponse } from "../protocols";
+import { IUpdateUserController, IUpdateUserRepository, UpdateUserParams } from "./protocols";
 
-export class MongoUpdateUserRepository implements IUpdateUserRepository {
-  async updateUser(id:string, params: UpdateUserParams): Promise<User> {
-    await MongoClient.db.
-      collection("users").
-      updateOne({
-        _id: new ObjectId(id) 
-      }, {
-        $set: {
-          ...params
-        }
-      });
+export class UpdateUserController implements IUpdateUserController {
+  constructor(private readonly updateUserRepository: IUpdateUserRepository) {}
 
-    const updatedUser = await MongoClient.db.
-      collection<Omit<User, "id">>("users").
-      findOne({ _id: new ObjectId(id) });
+  async handle(httpRequest: HttpRequest<any>): Promise<HttpResponse<User>> {
+    try {
+      const id = httpRequest?.params?.id;
+      const body = httpRequest?.body;
 
-    if (!updatedUser) {
-      throw new Error("User not updated.");
+      if (!id) {
+        return {
+          statusCode: 400,
+          body: "Missing user id."
+        };
+      }
+
+      const allowedFieldsToUpdate: (keyof UpdateUserParams)[] = ["name", "email", "password"];
+
+      const someFieldIsNotAllowedToUpdate = Object.keys(body).
+        some(key => !allowedFieldsToUpdate.includes(key as keyof UpdateUserParams));
+
+      if (someFieldIsNotAllowedToUpdate) {
+        return {
+          statusCode: 400,
+          body: "Some received fiel is not allowed."
+        };
+      }
+
+      const user = await this.updateUserRepository.updateUser(id, body);
+
+      return {
+        statusCode: 200,
+        body: user
+      };
+    } catch (error) {
+      console.error(error);
+
+      return {
+        statusCode: 500,
+        body: "Something wen wrong."
+      };
     }
-
-    const { _id, ...rest } = updatedUser;
-
-    return { id: _id.toHexString(), ...rest };
-  };
-};
+  }
+}
