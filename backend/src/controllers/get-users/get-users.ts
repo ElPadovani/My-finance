@@ -1,27 +1,20 @@
-import { IController } from "../protocols";
+import { User } from "../../models/user";
+import { ok, serverError } from "../helpers";
+import { HttpResponse, IController } from "../protocols";
 import { IGetUsersRepository } from "./protocols";
 
 export class GetUsersController implements IController {
   constructor(private readonly getUsersRepository: IGetUsersRepository) {}
 
-  async handle() {
+  async handle(): Promise<HttpResponse<User[] | string>> {
     try {
-      // validar req
-      // direcionar chamada pro repository
       const users = await this.getUsersRepository.getUsers();
       
-      return {
-        statusCode: 200,
-        body: users
-      }
+      return ok<User[]>(users);
     } catch (error) {
       console.error(error)
       
-      return {
-        statusCode: 500,
-        body: "SomethingWentWrong"
-      }
+      return serverError();
     }
-
   }
 }
