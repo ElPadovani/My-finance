@@ -3,7 +3,7 @@ import { MongoClient } from "../../database/mongo";
 import { Expense } from "../../models/expense";
 import { MongoExpense } from "../mongo-protocols";
 
-export class MongoCreateExpense implements ICreateExpenseRepository {
+export class MongoCreateExpenseRepository implements ICreateExpenseRepository {
   async createExpense(params: CreateExpenseParams): Promise<Expense> {
     const expenseParams: MongoExpense = { ...params, expense_date: new Date(params.expense_date) ,creation_date: new Date() };
 
