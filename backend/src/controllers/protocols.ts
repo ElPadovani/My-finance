@@ -1,3 +1,5 @@
+import { User } from "../models/user";
+
 export interface HttpResponse<T> {
   statusCode: HttpsStatusCode;
   body: T;
@@ -19,3 +21,7 @@ export enum HttpsStatusCode {
 export interface IController {
   handle(httpRequest: HttpRequest<unknown>): Promise<HttpResponse<unknown>>; 
 };
+
+export interface IUserRepository {
+  findByEmail(email: string): Promise<User>;
+}
