@@ -10,6 +10,8 @@ import { DeleteExpenseController } from "../controllers/delete/delete-expense/de
 import { MongoGetUserExpenseRepository } from "../repositories/get/get-user-expenses/mongo-get-user-expenses";
 import { GetUserExpensesController } from "../controllers/get/get-user-expenses/get-user-expenses";
 
+import { authMiddleware } from "../middlewares/auth-middleware";
+
 const router = Router();
 
 router.get("/expenses", async (req, res) => {
@@ -22,7 +24,7 @@ router.get("/expenses", async (req, res) => {
   res.status(statusCode).send(body);
 });
 
-router.get("/expenses/:userId", async (req, res) => {
+router.get("/expenses/:userId", authMiddleware, async (req, res) => {
   const mongoGetUserExpensesRepository = new MongoGetUserExpenseRepository();
 
   const getUserExpensesController = new GetUserExpensesController(mongoGetUserExpensesRepository);

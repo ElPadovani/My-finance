@@ -41,7 +41,7 @@ export class LoginUserController implements IController {
         return badRequest("invalid credentials.")
       }
 
-      const token = jwt.sign({ user_id: user.id }, JWT_SECRET, {
+      const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
         expiresIn: "1d"
       });
 
