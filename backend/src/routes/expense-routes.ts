@@ -7,6 +7,8 @@ import { MongoUpdateExpenseRepository } from "../repositories/update/update-expe
 import { UpdateExpenseController } from "../controllers/update/update-expense/update-expense";
 import { MongoDeleteExpenseRepository } from "../repositories/delete/delete-expenses/mongo-delete-expenses";
 import { DeleteExpenseController } from "../controllers/delete/delete-expense/delete-expense";
+import { MongoGetUserExpenseRepository } from "../repositories/get/get-user-expenses/mongo-get-user-expenses";
+import { GetUserExpensesController } from "../controllers/get/get-user-expenses/get-user-expenses";
 
 const router = Router();
 
@@ -17,6 +19,16 @@ router.get("/expenses", async (req, res) => {
   
   const { body, statusCode } = await getExpensesController.handle();
   
+  res.status(statusCode).send(body);
+});
+
+router.get("/expenses/:userId", async (req, res) => {
+  const mongoGetUserExpensesRepository = new MongoGetUserExpenseRepository();
+
+  const getUserExpensesController = new GetUserExpensesController(mongoGetUserExpensesRepository);
+
+  const { body, statusCode } = await getUserExpensesController.handle({ body: req.body, params: req.params });
+
   res.status(statusCode).send(body);
 });
 
