@@ -1,4 +1,5 @@
 
+import { hash } from "bcrypt";
 import { CreateUserParams, ICreateUserRepository } from "../../../controllers/create/create-user/protocols";
 import { MongoClient } from "../../../database/mongo";
 import { User } from "../../../models/user";
@@ -6,7 +7,9 @@ import { MongoUser } from "../../mongo-protocols";
 
 export class MongoCreateUserRepository implements ICreateUserRepository {
   async createUser(params: CreateUserParams): Promise<User> {
-    const userParams: MongoUser = { ...params, creation_date: new Date() }
+    const hashedPwd = await hash(params.password, 10);
+
+    const userParams: MongoUser = { ...params, password: hashedPwd, creation_date: new Date() }
 
     const { insertedId } = await MongoClient.db.
       collection("users").
