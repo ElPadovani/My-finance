@@ -14,7 +14,7 @@ import { authMiddleware } from "../middlewares/auth-middleware";
 
 const router = Router();
 
-router.get("/expenses", async (req, res) => {
+router.get("/expenses/all", async (req, res) => {
   const mongoGetExpensesRepository = new MongoGetExpensesRepository();
 
   const getExpensesController = new GetExpensesController(mongoGetExpensesRepository);
@@ -34,7 +34,7 @@ router.get("/expenses/:userId", authMiddleware, async (req, res) => {
   res.status(statusCode).send(body);
 });
 
-router.post("/expenses", async (req, res) => {
+router.post("/expenses", authMiddleware, async (req, res) => {
   const mongoCreateExpenseRepository = new MongoCreateExpenseRepository();
 
   const createExpenseController = new CreateExpenseController(mongoCreateExpenseRepository);
@@ -44,7 +44,7 @@ router.post("/expenses", async (req, res) => {
   res.status(statusCode).send(body);
 });
 
-router.patch("/expenses/:id", async (req, res) => {
+router.patch("/expenses/:id", authMiddleware, async (req, res) => {
   const mongoUpdateExpenseRepository = new MongoUpdateExpenseRepository();
 
   const updateExpenseController = new UpdateExpenseController(mongoUpdateExpenseRepository);
@@ -54,7 +54,7 @@ router.patch("/expenses/:id", async (req, res) => {
   res.status(statusCode).send(body);
 });
 
-router.delete("/expenses/:id", async (req, res) => {
+router.delete("/expenses/:id", authMiddleware, async (req, res) => {
   const mongoDeleteExpenseRepository = new MongoDeleteExpenseRepository();
 
   const deleteExpenseController = new DeleteExpenseController(mongoDeleteExpenseRepository);
