@@ -9,8 +9,13 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <GluestackUIProvider config={config}>
         <SafeAreaView style={{ flex: 1 }}>
-          <StatusBar style="dark" backgroundColor="#fff" />
-          <Stack screenOptions={{ headerShown: false }} />
+          <StatusBar style="light" backgroundColor="#000" />
+          <Stack
+            screenOptions={{
+              headerTintColor: "#000",
+              headerTitle: "My Finance",
+            }}
+          />
         </SafeAreaView>
       </GluestackUIProvider>
     </SafeAreaProvider>
