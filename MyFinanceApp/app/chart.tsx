@@ -1,12 +1,16 @@
 import { Box } from "@gluestack-ui/themed";
 import { Dimensions } from "react-native";
 import { BarChart } from "react-native-chart-kit";
+import { StatusBar } from "expo-status-bar";
 
 export default function ChartScreen() {
   const width = Dimensions.get("window").width - 30;
 
   return (
-    <Box sx={{ flex: 1, p: "$5", alignItems: "center", justifyContent: "center" }}>
+    <Box flex={1} bg="$black" alignItems="center" justifyContent="center">
+      {/* Esconde a barra de notificações só nesta tela */}
+      <StatusBar hidden />
+
       <BarChart
         data={{
           labels: ["Mercado", "Transporte", "Lazer", "Contas"],
@@ -16,9 +20,7 @@ export default function ChartScreen() {
         height={220}
         yAxisLabel="R$"
         chartConfig={{
-          backgroundColor: "#1e3d59",
-          backgroundGradientFrom: "#1e3d59",
-          backgroundGradientTo: "#1e3d59",
+          backgroundColor: "transparent",
           decimalPlaces: 0,
           color: (opacity = 1) => `rgba(255,255,255, ${opacity})`,
           labelColor: (opacity = 1) => `rgba(255,255,255, ${opacity})`,
