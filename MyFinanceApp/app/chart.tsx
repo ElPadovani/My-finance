@@ -1,17 +1,18 @@
 import { Box } from "@gluestack-ui/themed";
-import { BarChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
-import React from "react";
+import { BarChart } from "react-native-chart-kit";
 
 export default function ChartScreen() {
+  const width = Dimensions.get("window").width - 30;
+
   return (
-    <Box flex={1} safeArea p={5} alignItems="center" justifyContent="center">
+    <Box sx={{ flex: 1, p: "$5", alignItems: "center", justifyContent: "center" }}>
       <BarChart
         data={{
           labels: ["Mercado", "Transporte", "Lazer", "Contas"],
           datasets: [{ data: [150, 50, 80, 200] }],
         }}
-        width={Dimensions.get("window").width - 30}
+        width={width}
         height={220}
         yAxisLabel="R$"
         chartConfig={{

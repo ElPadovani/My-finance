@@ -1,49 +1,56 @@
-import React, { useState } from "react";
-import { Box, Button, FlatList, HStack, IconButton, Input, Text } from "@gluestack-ui/themed";
-import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
+import { FlatList, Pressable, View } from "react-native";
 import { useRouter } from "expo-router";
+import { Box, VStack, HStack, Text, Input, InputField, Button, ButtonText } from "@gluestack-ui/themed";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function ExpensesScreen() {
+type Expense = { id: string; title: string; amount: number };
+
+export default function Expenses() {
   const router = useRouter();
-  const [expenses, setExpenses] = useState([
+  const [expenses, setExpenses] = useState<Expense[]>([
     { id: "1", title: "Mercado", amount: 150 },
     { id: "2", title: "Transporte", amount: 50 },
   ]);
   const [newExpense, setNewExpense] = useState("");
 
-  const addExpense = () => {
-    if (!newExpense) return;
-    setExpenses([...expenses, { id: Date.now().toString(), title: newExpense, amount: 0 }]);
+  function addExpense() {
+    if (!newExpense.trim()) return;
+    setExpenses((prev) => [...prev, { id: Date.now().toString(), title: newExpense.trim(), amount: 0 }]);
     setNewExpense("");
-  };
+  }
 
-  const deleteExpense = (id: string) => {
-    setExpenses(expenses.filter((item) => item.id !== id));
-  };
+  function deleteExpense(id: string) {
+    setExpenses((prev) => prev.filter((e) => e.id !== id));
+  }
 
   return (
-    <Box flex={1} safeArea p={5}>
-      <HStack space={2}>
-        <Input flex={1} placeholder="Novo gasto" value={newExpense} onChangeText={setNewExpense} />
-        <Button onPress={addExpense}>Adicionar</Button>
+    <Box sx={{ flex: 1, p: "$5" }}>
+      <HStack sx={{ gap: "$2", mb: "$4" }}>
+        <Input sx={{ flex: 1 }}>
+          <InputField placeholder="Novo gasto" value={newExpense} onChangeText={setNewExpense} />
+        </Input>
+        <Button onPress={addExpense}>
+          <ButtonText>Adicionar</ButtonText>
+        </Button>
       </HStack>
 
       <FlatList
         data={expenses}
         keyExtractor={(item) => item.id}
+        ItemSeparatorComponent={() => <View style={{ height: 1, backgroundColor: "#eee" }} />}
         renderItem={({ item }) => (
-          <HStack justifyContent="space-between" alignItems="center" p={2} borderBottomWidth={1}>
+          <HStack sx={{ justifyContent: "space-between", alignItems: "center", py: "$2" }}>
             <Text>{item.title} - R${item.amount}</Text>
-            <IconButton
-              icon={<Ionicons name="trash" size={20} color="red" />}
-              onPress={() => deleteExpense(item.id)}
-            />
+            <Pressable onPress={() => deleteExpense(item.id)} hitSlop={8}>
+              <Ionicons name="trash" size={20} color="#d11" />
+            </Pressable>
           </HStack>
         )}
       />
 
-      <Button mt={5} onPress={() => router.push("/chart")}>
-        Ver Gráfico
+      <Button mt="$5" onPress={() => router.push("/chart")}>
+        <ButtonText>Ver Gráfico</ButtonText>
       </Button>
     </Box>
   );
