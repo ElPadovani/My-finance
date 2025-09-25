@@ -1,4 +1,5 @@
-import { Expense } from "../../models/expense";
+import { Expense } from "../../../models/expense";
+
 
 export interface CreateExpenseParams {
   user_id: string;
