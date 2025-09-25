@@ -45,7 +45,10 @@ export class LoginUserController implements IController {
         expiresIn: "1d"
       });
 
-      return ok<LoginUserResult>({ token });
+      return ok<LoginUserResult>({ 
+        token, 
+        user: (({password, ...rest}) => ({...rest}))(user) 
+      });
     } catch (error) {
       console.error(error);
 
