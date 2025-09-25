@@ -1,7 +1,7 @@
 import validator from "validator";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { MongoUserRepository } from "../../repositories/mongo-user-repository";
+import { MongoUserRepository, UserNotFoundError } from "../../repositories/mongo-user-repository";
 import { badRequest, ok, serverError } from "../helpers";
 import { HttpRequest, HttpResponse, IController } from "../protocols";
 import { LoginUserParams, LoginUserResult } from "./protocols";
@@ -48,6 +48,10 @@ export class LoginUserController implements IController {
       return ok<LoginUserResult>({ token });
     } catch (error) {
       console.error(error);
+
+      if (error instanceof UserNotFoundError) {
+        return badRequest("invalid credentials.");
+      }
 
       return serverError();
     };
