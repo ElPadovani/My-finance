@@ -12,7 +12,7 @@ import { MongoUserRepository } from "../repositories/mongo-user-repository";
 
 const router = Router();
 
-router.get("/login", async (req, res) => {
+router.post("/login", async (req, res) => {
   const mongoUserRepository = new MongoUserRepository();
 
   const loginUserController = new LoginUserController(mongoUserRepository);
