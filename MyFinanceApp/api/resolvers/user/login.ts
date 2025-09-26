@@ -15,7 +15,7 @@ const login = async (email: string, password: string): Promise<Response<Login>> 
     return { data };
   } catch (error: any) {
     return {
-      error
+      error: error.response?.data || "Erro ao fazer login."
     }
   }
 };

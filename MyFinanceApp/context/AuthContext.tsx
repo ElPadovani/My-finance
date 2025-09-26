@@ -24,8 +24,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("AuthProvider montado");
-
     (async () => {
       const savedToken = await getToken();
       const savedUser = await getUser();
@@ -39,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setToken(savedToken);
             setUser(JSON.parse(savedUser));
 
-            router.replace("/(tabs)/expenses");
+            // router.replace("/(tabs)/expenses");
           } else {
             // Token expirado → limpar
             await removeToken();
