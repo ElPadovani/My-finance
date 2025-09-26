@@ -1,8 +1,8 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode"; // se quiser validar expiração do JWT
 import { User } from "@/api/types";
 import { getToken, getUser, removeToken, removeUser, saveToken, saveUser } from "@/helpers/auth";
+import { useRouter } from "expo-router";
 
 
 
@@ -10,19 +10,22 @@ type AuthContextType = {
   user: User | null;
   token: string | null;
   loading: boolean;
-  login: (token: string, user: User) => Promise<void>;
+  saveLogin: (token: string, user: User) => Promise<void>;
   logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Verifica se já existe sessão salva
   useEffect(() => {
+    console.log("AuthProvider montado");
+
     (async () => {
       const savedToken = await getToken();
       const savedUser = await getUser();
@@ -35,6 +38,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (decoded.exp && decoded.exp > now) {
             setToken(savedToken);
             setUser(JSON.parse(savedUser));
+
+            router.replace("/(tabs)/expenses");
           } else {
             // Token expirado → limpar
             await removeToken();
@@ -51,14 +56,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })();
   }, []);
 
-  async function login(token: string, user: User) {
+  const saveLogin = async (token: string, user: User) => {
     await saveToken(token);
     await saveUser(JSON.stringify(user));
     setToken(token);
     setUser(user);
   }
 
-  async function logout() {
+  const logout = async () => {
     await removeToken();
     await removeUser()
     setToken(null);
@@ -66,14 +71,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, saveLogin, logout }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-export function useAuth() {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth deve ser usado dentro de AuthProvider");
   return context;
-}
+};

@@ -4,6 +4,8 @@ import { Pressable } from "react-native";
 import { useEffect, useState } from "react";
 import login from "@/api/resolvers/user/login";
 import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "@/context/AuthContext";
+import { getUser } from "@/helpers/auth";
 
 type UserParams = {
   email: string;
@@ -12,6 +14,8 @@ type UserParams = {
 
 export default function Login() {
   const router = useRouter();
+
+  const { loading, saveLogin } = useAuth();
 
   const [userParams, setUserParams] = useState<UserParams>({ email: "", password: ""});
   const [showPwd, setShowPwd] = useState(false);
@@ -22,7 +26,17 @@ export default function Login() {
 
     console.log(response)
 
-    if (response.error) setError(response.error);
+    if (response.error && !response.data) {
+      setError(response.error);
+
+      return;
+    };
+
+    await saveLogin(response.data!.token, response.data!.user);
+
+    console.log(getUser())
+
+    router.replace(`/expenses/${response.data!.user.id}` as any);
   };
 
   return (
