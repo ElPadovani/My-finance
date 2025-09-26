@@ -47,7 +47,7 @@ export class LoginUserController implements IController {
 
       return ok<LoginUserResult>({ 
         token, 
-        user: (({password, ...rest}) => ({...rest}))(user) 
+        user: (({password, creation_date, ...rest}) => ({...rest}))(user) 
       });
     } catch (error) {
       console.error(error);

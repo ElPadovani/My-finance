@@ -1,6 +1,6 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "localhost:8000", 
+  baseURL: "https://my-finance-backend.onrender.com", 
   timeout: 10000,
 });

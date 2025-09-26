@@ -7,5 +7,5 @@ export interface LoginUserParams {
 
 export interface LoginUserResult {
   token: string;
-  user: Omit<User, "password">;
+  user: Omit<User, "password" | "creation_date">;
 }

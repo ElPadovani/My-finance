@@ -2,7 +2,6 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  creation_date: Date;
 }
 
 export interface Expense {
