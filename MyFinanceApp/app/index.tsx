@@ -35,8 +35,6 @@ export default function Login() {
 
     await saveLogin(response.data!.token, response.data!.user);
 
-    console.log(getUser());
-
     router.replace("/(tabs)/expenses");
   };
 

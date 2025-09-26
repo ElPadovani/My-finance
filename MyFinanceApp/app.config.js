@@ -1,4 +1,6 @@
-{
+import "dotenv/config";
+
+export default {
   "expo": {
     "name": "MyFinanceApp",
     "slug": "MyFinanceApp",
@@ -43,6 +45,9 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    extra: {
+      apiUrl: `http://${process.env.IP ?? "localhost"}:8000`,
+    },
   }
 }
