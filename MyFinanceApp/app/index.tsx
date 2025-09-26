@@ -6,7 +6,6 @@ import login from "@/api/resolvers/user/login";
 import { Ionicons } from "@expo/vector-icons";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useAuth } from "@/context/AuthContext";
-import { getUser } from "@/helpers/auth";
 
 type UserParams = {
   email: string;
@@ -25,13 +24,12 @@ export default function Login() {
   const handleLogin = async (email: string, password: string) => {
     const response = await login(email, password);
 
-    console.log(response)
+    console.log(response);
 
-    if (response.error && !response.data) {
-      setError(response.error);
-
+    if (!response || response.error) {
+      setError(response?.error || "Erro inesperado");
       return;
-    };
+    }
 
     await saveLogin(response.data!.token, response.data!.user);
 

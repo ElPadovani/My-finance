@@ -14,9 +14,9 @@ const login = async (email: string, password: string): Promise<Response<Login>> 
 
     return { data };
   } catch (error: any) {
-    return {
-      error: error.response?.data || "Erro ao fazer login."
-    }
+    console.error(`Erro de status ${error.status}: ${error.mensagem}`);
+
+    return { error: error.mensagem || "Erro inesperado" };
   }
 };
 

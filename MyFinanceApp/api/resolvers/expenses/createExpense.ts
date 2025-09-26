@@ -17,9 +17,9 @@ const createUser = async (expenseParams: CreateExpenseParams): Promise<Response<
 
     return { data };
   } catch (error: any) {
-    return {
-      error: error.response?.data || "Erro ao criar gasto."
-    }
+    console.error(`Erro de status ${error.status}: ${error.mensagem}`);
+
+    return { error: error.mensagem || "Erro inesperado" };
   }
 };
 

@@ -1,16 +1,16 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { jwtDecode } from "jwt-decode"; // se quiser validar expiração do JWT
-import { User } from "@/api/types";
+import { AppUser } from "@/api/types";
 import { getToken, getUser, removeToken, removeUser, saveToken, saveUser } from "@/helpers/auth";
 import { useRouter } from "expo-router";
 
 
 
 type AuthContextType = {
-  user: User | null;
+  user: AppUser | null;
   token: string | null;
   loading: boolean;
-  saveLogin: (token: string, user: User) => Promise<void>;
+  saveLogin: (token: string, user: AppUser) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -19,7 +19,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })();
   }, []);
 
-  const saveLogin = async (token: string, user: User) => {
+  const saveLogin = async (token: string, user: AppUser) => {
     await saveToken(token);
     await saveUser(JSON.stringify(user));
     setToken(token);

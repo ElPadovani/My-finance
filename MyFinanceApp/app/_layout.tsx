@@ -12,12 +12,25 @@ export default function RootLayout() {
         <AuthProvider>
           <SafeAreaView style={{ flex: 1 }}>
             <StatusBar style="light" backgroundColor="#000" />
-            <Stack
-              screenOptions={{
-                headerTintColor: "#000",
-                headerTitle: "My Finance",
-              }}
-            />
+            <Stack>
+              <Stack.Screen 
+                name="index"
+                options={{ headerShown: false }}
+              />
+
+              <Stack.Screen 
+                name="register"
+                options={{ headerShown: false }}
+              />
+
+              <Stack.Screen 
+                name="(tabs)"
+                options={{
+                  headerTintColor: "#000",
+                  headerTitle: "My Finance",
+                }}
+              />
+            </Stack>
           </SafeAreaView>
         </AuthProvider>
       </GluestackUIProvider>

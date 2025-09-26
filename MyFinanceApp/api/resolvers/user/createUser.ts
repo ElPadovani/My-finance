@@ -15,9 +15,9 @@ const createUser = async (userParams: CreateUserParams): Promise<Response<User>>
 
     return { data };
   } catch (error: any) {
-    return {
-      error: error.response?.data || "Erro ao criar usuário."
-    }
+    console.error(`Erro de status ${error.status}: ${error.mensagem}`);
+
+    return { error: error.mensagem || "Erro inesperado" };
   }
 };
 
