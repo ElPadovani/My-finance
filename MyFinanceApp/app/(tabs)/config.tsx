@@ -1,11 +1,80 @@
+import { Dispatch, SetStateAction, useState, useRef } from "react";
 import { useRouter } from "expo-router";
-import { Box, VStack, Text, Input, InputField, Button, ButtonText } from "@gluestack-ui/themed";
+import { Box, VStack, Text, Input, InputField, Button, ButtonText, 
+  AlertDialog,
+  AlertDialogBackdrop,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogCloseButton,
+  AlertDialogBody,
+  AlertDialogFooter, } from "@gluestack-ui/themed";
 import { KeyboardAvoidingView, Platform } from "react-native";
-import { useState } from "react";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useAuth } from "@/context/AuthContext";
+import login from "@/api/resolvers/user/login";
 
-export default function Login() {
+type ChangePassModalProps = {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  handle: () => void;
+}
+
+function ChangePassModal({ open, setOpen, handle }: ChangePassModalProps) {
+  const cancelRef = useRef(null);
+
+  const [error, setError] = useState("");
+  const [newPwd, setNewPwd] = useState("");
+
+  const handleChange = () => {};
+
+  return (
+    <AlertDialog
+      isOpen={open}
+      onClose={() => setOpen(false)}
+      leastDestructiveRef={cancelRef}
+    >
+      <AlertDialogBackdrop />
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <Text fontWeight="$bold" fontSize="$lg">
+            Confirmação
+          </Text>
+          <AlertDialogCloseButton />
+        </AlertDialogHeader>
+
+        <AlertDialogBody>
+          <Text>Tem certeza que deseja mudar sua senha?</Text>
+
+          <Input>
+            <InputField 
+              placeholder="Senha nova" 
+              onChangeText={(text) => { 
+                setError("");
+                setNewPwd(text)
+              }}
+            />
+          </Input>
+        </AlertDialogBody>
+
+        <AlertDialogFooter>
+          <Button
+            action="secondary"
+            ref={cancelRef}
+            mr="$3"
+            onPress={() => setOpen(false)}
+          >
+            <Text>Cancelar</Text>
+          </Button>
+          <Button action="primary" onPress={handleChange}>
+            <Text color="white">Confirmar</Text>
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+export default function Config() {
   const router = useRouter();
 
   const { user } = useAuth();
@@ -15,24 +84,11 @@ export default function Login() {
 
     return;
   };
-
+  
+  const [openModal, setOpenModal] = useState(false);
   const [userInfo, setUserInfo] = useState(user);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // const handleLogin = async (email: string, password: string) => {
-  //   const response = await login(email, password);
-
-  //   console.log(response)
-
-  //   if (response.error && !response.data) {
-  //     setError(response.error);
-
-  //     return;
-  //   };
-
-  //   router.replace("/(tabs)/expenses");
-  // };
 
   if (loading) {
     return (
