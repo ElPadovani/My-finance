@@ -6,7 +6,7 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false, // header já vem do Stack raiz
-        tabBarActiveTintColor: "#000",
+        tabBarActiveTintColor: "#5e3f44ff",
       }}
     >
       <Tabs.Screen

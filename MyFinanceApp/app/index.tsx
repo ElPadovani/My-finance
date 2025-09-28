@@ -87,6 +87,7 @@ export default function Login() {
           )}
 
           <Button 
+            sx={{ backgroundColor: "#5e3f44ff", ":active": { opacity: "$50" } }}
             isDisabled={!!error.length}
             onPress={() => handleLogin(userParams.email, userParams.password)}
           >
@@ -94,7 +95,7 @@ export default function Login() {
           </Button>
 
           <Pressable onPress={() => router.push("/register")}>
-            <Text sx={{ color: "$primary600", mt: "$2" }}>Criar Conta</Text>
+            <Text sx={{ color: "#5e3f44ff", mt: "$2" }}>Criar Conta</Text>
           </Pressable>
         </VStack>
       </Box>

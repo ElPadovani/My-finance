@@ -86,16 +86,16 @@ export default function Expenses() {
       {expenses.length > 0 ? (
         <>
           <FlatList
-            data={expenses.sort((a, b) => 
+            data={expenses.sort((a, b) =>
               (new Date(b.expense_date).getTime() - new Date(a.expense_date).getTime())
             )}
             keyExtractor={(item) => item.id}
             ItemSeparatorComponent={() => <View sx={{ height: "$4" }} />}
             renderItem={({ item }) => (
-              <VStack sx={{ 
-                  alignItems: "flex-start", py: "$2", px: "$2", gap: "$1",
-                  backgroundColor: "#fff", borderColor: "#2c2c2c", borderRadius: 6
-                }}
+              <VStack sx={{
+                alignItems: "flex-start", py: "$2", px: "$2", gap: "$1",
+                backgroundColor: "#fff", borderColor: "#2c2c2c", borderRadius: 6
+              }}
               >
                 <Text
                   sx={{ fontWeight: 600, fontSize: 18 }}
@@ -123,8 +123,11 @@ export default function Expenses() {
               </VStack>
             )}
           />
-
-          <Button mt="$5" onPress={() => router.push("/chart")}>
+            
+          <Button 
+            sx={{ marginTop: "$5", backgroundColor: "#5e3f44ff", ":active": { opacity: "$50" } }} 
+            onPress={() => router.push("/chart")}
+          >
             <ButtonText>Aplicar Filtros</ButtonText>
           </Button>
         </>

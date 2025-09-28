@@ -197,6 +197,7 @@ export default function Config() {
             )}
 
             <Button
+              sx={{ backgroundColor: "#5e3f44ff", ":active": { opacity: "$50" } }}
               isDisabled={!!error.length}
               onPress={async () => {
                 setLoading(true);
@@ -208,6 +209,7 @@ export default function Config() {
             </Button>
 
             <Button
+              sx={{ backgroundColor: "#5e3f44ff", ":active": { opacity: "$50" } }}
               isDisabled={!!error.length}
               onPress={() => setOpenModal(true)}
             >
