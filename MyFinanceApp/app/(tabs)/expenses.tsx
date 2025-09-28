@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { useRouter } from "expo-router";
-import { Box, VStack, HStack, Text, Input, InputField, Button, ButtonText, View } from "@gluestack-ui/themed";
+import { Box, VStack, HStack, Text, Input, InputField, Button, ButtonText, View, Popover } from "@gluestack-ui/themed";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { Expense } from "@/api/types";
 import deleteExpense from "@/api/resolvers/expenses/deleteExpense";
@@ -23,6 +23,9 @@ export default function Expenses() {
 
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [params, setParams] = useState<Params>({});
+  const [createModal, setCreateModal] = useState(false);
+  const [contentModal, setContentModal] = useState(false);
+  const [filterModal, setFilterModal] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -124,12 +127,44 @@ export default function Expenses() {
             )}
           />
             
-          <Button 
-            sx={{ marginTop: "$5", backgroundColor: "#5e3f44ff", ":active": { opacity: "$50" } }} 
-            onPress={() => router.push("/chart")}
-          >
-            <ButtonText>Aplicar Filtros</ButtonText>
-          </Button>
+          <HStack sx={{ marginTop: "$5", gap: "$6", alignItems: "center" }}>
+            <Button 
+              sx={{ 
+                flex: 1,
+                backgroundColor: "#5e3f44ff", 
+                ":active": { opacity: "$50" },
+                // sombra iOS
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.08, // bem suave
+                shadowRadius: 6,
+
+                // sombra Android
+                elevation: 3,
+              }} 
+              onPress={() => setFilterModal(true)}
+            >
+              <ButtonText>Aplicar Filtros</ButtonText>
+            </Button>
+
+            <Button 
+              sx={{ 
+                backgroundColor: "#fff",
+                ":active": { opacity: "$50" } ,
+                // sombra iOS
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.08, // bem suave
+                shadowRadius: 6,
+
+                // sombra Android
+                elevation: 3,
+              }} 
+              onPress={() => setCreateModal(true)}
+            >
+              <Ionicons name="add-sharp" size={26}/>
+            </Button>
+          </HStack>
         </>
       ) : (
         <Text>Nenhum gasto criado</Text>
