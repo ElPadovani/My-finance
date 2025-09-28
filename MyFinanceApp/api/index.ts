@@ -2,8 +2,7 @@ import axios from "axios";
 import Constants from "expo-constants";
 
 export const api = axios.create({
-  // baseURL: "https://my-finance-backend.onrender.com", 
-  baseURL: Constants.expoConfig?.extra?.apiUrl ?? "http://localhost:8000",
+  baseURL: Constants.expoConfig?.extra?.apiUrl ?? "https://my-finance-backend.onrender.com",
   timeout: 10000,
 });
 

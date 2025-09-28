@@ -14,7 +14,6 @@ import { KeyboardAvoidingView, Platform } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useAuth } from "@/context/AuthContext";
 import updateUser, { UpdateUserParams } from "@/api/resolvers/user/updateUser";
-import { getUser } from "@/helpers/auth";
 
 type ChangePassModalProps = {
   open: boolean;
