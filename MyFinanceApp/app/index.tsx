@@ -87,7 +87,7 @@ export default function Login() {
           )}
 
           <Button 
-            disabled={!!error.length}
+            isDisabled={!!error.length}
             onPress={() => handleLogin(userParams.email, userParams.password)}
           >
             <ButtonText>Entrar</ButtonText>

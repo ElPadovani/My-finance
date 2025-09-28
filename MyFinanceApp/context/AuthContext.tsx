@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setToken(savedToken);
             setUser(JSON.parse(savedUser));
 
-            // router.replace("/(tabs)/expenses");
+            router.replace("/(tabs)/expenses");
           } else {
             // Token expirado → limpar
             await removeToken();
