@@ -1,7 +1,7 @@
 import { Expense } from "../../../models/expense";
 
 export interface GetUserExpenseParams {
-  description?: string;
+  title?: string;
   category?: string;
   expense_date?: Date;
   start_date?: string;
