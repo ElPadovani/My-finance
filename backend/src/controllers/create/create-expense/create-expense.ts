@@ -9,7 +9,7 @@ export class CreateExpenseController implements IController {
   async handle(httpRequest: HttpRequest<CreateExpenseParams>): Promise<HttpResponse<Expense | string>> {
     try {
       // verificar campos obrigatórios
-      const requiredFields = ["user_id", "description", "value", "category", "expense_date"];
+      const requiredFields = ["user_id", "title", "description", "value", "category", "expense_date"];
 
       for (const field of requiredFields) {
         if (!(!!httpRequest?.body?.[field as keyof CreateExpenseParams])) {
