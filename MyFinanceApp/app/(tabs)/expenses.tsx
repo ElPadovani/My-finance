@@ -1,57 +1,136 @@
-import { useState } from "react";
-import { FlatList, Pressable, View } from "react-native";
+import { useEffect, useState } from "react";
+import { FlatList } from "react-native";
 import { useRouter } from "expo-router";
-import { Box, VStack, HStack, Text, Input, InputField, Button, ButtonText } from "@gluestack-ui/themed";
-import { Ionicons } from "@expo/vector-icons";
+import { Box, VStack, HStack, Text, Input, InputField, Button, ButtonText, View } from "@gluestack-ui/themed";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { Expense } from "@/api/types";
+import deleteExpense from "@/api/resolvers/expenses/deleteExpense";
+import { useAuth } from "@/context/AuthContext";
+import getUserExpenses, { GetUserExpensesParams } from "@/api/resolvers/expenses/getUserExpenses";
 
-type Expense = { id: string; title: string; amount: number };
+type Params = Omit<GetUserExpensesParams, "userId">;
 
 export default function Expenses() {
   const router = useRouter();
-  const [expenses, setExpenses] = useState<Expense[]>([
-    { id: "1", title: "Mercado", amount: 150 },
-    { id: "2", title: "Transporte", amount: 50 },
-  ]);
-  const [newExpense, setNewExpense] = useState("");
 
-  function addExpense() {
-    if (!newExpense.trim()) return;
-    setExpenses((prev) => [...prev, { id: Date.now().toString(), title: newExpense.trim(), amount: 0 }]);
-    setNewExpense("");
+  const { user, token } = useAuth();
+
+  if (!user || !token) {
+    router.replace("/");
+
+    return;
   }
 
-  function deleteExpense(id: string) {
-    setExpenses((prev) => prev.filter((e) => e.id !== id));
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [params, setParams] = useState<Params>({});
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const GetUserExpenses = async () => {
+    const response = await getUserExpenses({ userId: user.id, ...params }, token);
+
+    console.log(response);
+
+    if (!response || response.error) {
+      setError(response?.error || "Erro inesperado");
+      return;
+    }
+
+    if (!response.data) {
+      setError("Erro ao buscar gastos.");
+      return;
+    }
+
+    setExpenses(response.data);
+  };
+
+  const handleDelete = async (expenseId: string) => {
+    setLoading(true);
+
+    const response = await deleteExpense(expenseId, token);
+
+    console.log(response);
+
+    if (!response || response.error) {
+      setError(response?.error || "Erro inesperado");
+      setLoading(false);
+      return;
+    }
+
+    if (!response.data) {
+      setError("Erro ao alterar informações");
+      setLoading(false);
+      return;
+    }
+
+    GetUserExpenses();
+
+    setLoading(false);
+    // fazer subir toast de conclusao
+  };
+
+  useEffect(() => {
+    GetUserExpenses();
+  }, []);
+
+  if (loading) {
+    return (
+      <Box sx={{ flex: 1, justifyContent: "center", alignItems: "center", p: "$5" }}>
+        <AntDesign name="loading" size={24} color="black" />
+      </Box>
+    );
   }
 
   return (
     <Box sx={{ flex: 1, p: "$5" }}>
-      <HStack sx={{ gap: "$2", mb: "$4" }}>
-        <Input sx={{ flex: 1 }}>
-          <InputField placeholder="Novo gasto" value={newExpense} onChangeText={setNewExpense} />
-        </Input>
-        <Button onPress={addExpense}>
-          <ButtonText>Adicionar</ButtonText>
-        </Button>
-      </HStack>
+      {expenses.length > 0 ? (
+        <>
+          <FlatList
+            data={expenses.sort((a, b) => 
+              (new Date(b.expense_date).getTime() - new Date(a.expense_date).getTime())
+            )}
+            keyExtractor={(item) => item.id}
+            ItemSeparatorComponent={() => <View sx={{ height: "$4" }} />}
+            renderItem={({ item }) => (
+              <VStack sx={{ 
+                  alignItems: "flex-start", py: "$2", px: "$2", gap: "$1",
+                  backgroundColor: "#fff", borderColor: "#2c2c2c", borderRadius: 6
+                }}
+              >
+                <Text
+                  sx={{ fontWeight: 600, fontSize: 18 }}
+                >
+                  {item.title}
+                </Text>
 
-      <FlatList
-        data={expenses}
-        keyExtractor={(item) => item.id}
-        ItemSeparatorComponent={() => <View style={{ height: 1, backgroundColor: "#eee" }} />}
-        renderItem={({ item }) => (
-          <HStack sx={{ justifyContent: "space-between", alignItems: "center", py: "$2" }}>
-            <Text>{item.title} - R${item.amount}</Text>
-            <Pressable onPress={() => deleteExpense(item.id)} hitSlop={8}>
-              <Ionicons name="trash" size={20} color="#d11" />
-            </Pressable>
-          </HStack>
-        )}
-      />
+                <Text
+                  sx={{ fontSize: 14 }}
+                >
+                  {item.category}
+                </Text>
 
-      <Button mt="$5" onPress={() => router.push("/chart")}>
-        <ButtonText>Ver Gráfico</ButtonText>
-      </Button>
+                <Text
+                  sx={{ color: "$green600", fontWeight: 500 }}
+                >
+                  {item.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                </Text>
+
+                <Text
+                  sx={{ color: "$warmGray400", fontSize: 12 }}
+                >
+                  Data: {new Date(item.expense_date).toLocaleDateString("pt-BR")}
+                </Text>
+              </VStack>
+            )}
+          />
+
+          <Button mt="$5" onPress={() => router.push("/chart")}>
+            <ButtonText>Aplicar Filtros</ButtonText>
+          </Button>
+        </>
+      ) : (
+        <Text>Nenhum gasto criado</Text>
+      )}
     </Box>
   );
 }

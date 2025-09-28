@@ -1,20 +1,21 @@
 import { api } from "@/api";
 import { Expense, Response } from "@/api/types";
 
-export type GetUserExpenseParams = {
+export type GetUserExpensesParams = {
   userId: string;
-  description?: string;
+  title?: string
   category?: string;
   expense_date?: Date;
   start_date?: string;
   end_date?: string;
 };
 
-const getUserExpenses = async (params: GetUserExpenseParams): Promise<Response<Expense[]>> => {
+const getUserExpenses = async (params: GetUserExpensesParams, token: string): Promise<Response<Expense[]>> => {
   try {
     const { data } = await api.post<Expense[]>(
       `/expenses/${params.userId}`,
-      (({ userId, ...rest }) => rest)(params)
+      (({ userId, ...rest }) => rest)(params),
+      { headers: { Authorization: `Bearer ${token}` } }
     );
 
     console.log(data);

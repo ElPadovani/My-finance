@@ -1,9 +1,12 @@
 import { api } from "@/api";
 import { Expense, Response } from "@/api/types";
 
-const getUserExpenses = async (expenseId: string): Promise<Response<Expense>> => {
+const deleteExpense = async (expenseId: string, token: string): Promise<Response<Expense>> => {
   try {
-    const { data } = await api.delete<Expense>(`/expenses/${expenseId}`);
+    const { data } = await api.delete<Expense>(
+      `/expenses/${expenseId}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
     console.log(data);
 
@@ -15,4 +18,4 @@ const getUserExpenses = async (expenseId: string): Promise<Response<Expense>> =>
   }
 }
 
-export default getUserExpenses;
+export default deleteExpense;
