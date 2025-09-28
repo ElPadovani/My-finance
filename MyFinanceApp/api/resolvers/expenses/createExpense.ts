@@ -1,5 +1,5 @@
 import { api } from "@/api";
-import { User, Response } from "@/api/types";
+import { Response, Expense } from "@/api/types";
 
 export type CreateExpenseParams = {
   user_id: string;
@@ -9,9 +9,9 @@ export type CreateExpenseParams = {
   expense_date: string;
 };
 
-const createUser = async (expenseParams: CreateExpenseParams): Promise<Response<User>> => {
+const createExpense = async (expenseParams: CreateExpenseParams): Promise<Response<Expense>> => {
   try {
-    const { data } = await api.post<User>("/expenses", expenseParams);
+    const { data } = await api.post<Expense>("/expenses", expenseParams);
   
     console.log(data);
 
@@ -23,4 +23,4 @@ const createUser = async (expenseParams: CreateExpenseParams): Promise<Response<
   }
 };
 
-export default createUser;
+export default createExpense;

@@ -28,11 +28,11 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="config"
+        name="account"
         options={{
-          title: "Configurações",
+          title: "Conta",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="list" size={size} color={color} />
+            <Ionicons name="person" size={size} color={color} />
           ),
         }}
       />

@@ -1,6 +1,5 @@
 import { Stack } from "expo-router";
 import { GluestackUIProvider } from "@gluestack-ui/themed";
-import { config as defaultConfig } from "@gluestack-ui/config";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { AuthProvider } from "@/context/AuthContext";
@@ -11,19 +10,7 @@ import {
   Poppins_600SemiBold,
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
-
-// custom config: sobrescrevendo fontes
-const customConfig = {
-  ...defaultConfig,
-  tokens: {
-    ...defaultConfig.tokens,
-    fonts: {
-      heading: "Poppins_700Bold",
-      body: "Poppins_400Regular",
-      mono: "Poppins_600SemiBold",
-    },
-  },
-};
+import { customConfig } from "@/gluestackConfig";
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({

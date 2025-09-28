@@ -14,6 +14,7 @@ import { KeyboardAvoidingView, Platform } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useAuth } from "@/context/AuthContext";
 import updateUser, { UpdateUserParams } from "@/api/resolvers/user/updateUser";
+import { Ionicons } from "@expo/vector-icons";
 
 type ChangePassModalProps = {
   open: boolean;
@@ -49,7 +50,9 @@ function ChangePassModal({ open, setOpen, handle, error, setError }: ChangePassM
           <Text fontWeight="$bold" fontSize="$lg">
             Confirmação
           </Text>
-          <AlertDialogCloseButton />
+          <AlertDialogCloseButton>
+            <Ionicons name="close-circle-outline" size={20} />
+          </AlertDialogCloseButton>
         </AlertDialogHeader>
 
         <AlertDialogBody>
