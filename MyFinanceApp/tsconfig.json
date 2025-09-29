@@ -6,7 +6,9 @@
       "@/*": [
         "./*"
       ]
-    }
+    },
+    "module": "ESNext",
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "**/*.ts",

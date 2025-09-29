@@ -3,7 +3,7 @@ import Constants from "expo-constants";
 
 export const api = axios.create({
   baseURL: Constants.expoConfig?.extra?.apiUrl ?? "https://my-finance-backend.onrender.com",
-  timeout: 10000,
+  timeout: 60000,
 });
 
 api.interceptors.response.use(
@@ -26,6 +26,8 @@ api.interceptors.response.use(
 
       return Promise.reject({ status, mensagem });
     }
+
+    console.log(error);
 
     return Promise.reject({ mensagem: "Erro de rede" });
   }

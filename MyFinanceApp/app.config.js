@@ -47,7 +47,7 @@ export default {
       "reactCompiler": true
     },
     extra: {
-      apiUrl: `http://${process.env.IP ?? "localhost"}:8000`,
+      apiUrl: process.env.IP ? `http://${process.env.IP}:8000` : "https://my-finance-backend.onrender.com",
     },
   }
 }
