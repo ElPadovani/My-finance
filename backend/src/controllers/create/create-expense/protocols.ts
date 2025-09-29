@@ -3,6 +3,7 @@ import { Expense } from "../../../models/expense";
 
 export interface CreateExpenseParams {
   user_id: string;
+  title: string
   description: string;
   value: number;
   category: string;

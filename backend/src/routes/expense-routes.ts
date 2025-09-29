@@ -24,7 +24,7 @@ router.get("/expenses/all", async (req, res) => {
   res.status(statusCode).send(body);
 });
 
-router.get("/expenses/:userId", authMiddleware, async (req, res) => {
+router.post("/expenses/:userId", authMiddleware, async (req, res) => {
   const mongoGetUserExpensesRepository = new MongoGetUserExpenseRepository();
 
   const getUserExpensesController = new GetUserExpensesController(mongoGetUserExpensesRepository);

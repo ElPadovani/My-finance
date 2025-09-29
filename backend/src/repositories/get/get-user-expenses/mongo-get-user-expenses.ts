@@ -10,8 +10,8 @@ export class MongoGetUserExpenseRepository implements IGetUserExpenseRepository 
       user_id: userId,
     };
 
-    if (expenseParams?.description) {
-      query.description = { $regex: expenseParams.description, $options: "i" };
+    if (expenseParams?.title) {
+      query.description = { $regex: expenseParams.title, $options: "i" };
     }
 
     if (expenseParams?.category) {

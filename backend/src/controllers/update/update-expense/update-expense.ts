@@ -19,7 +19,7 @@ export class UpdateExpenseController implements IController {
         return badRequest("Missing expense id.");
       }
 
-      const allowedFieldsToUpdate: (keyof UpdateExpenseParams)[] = ["category", "description", "value"];
+      const allowedFieldsToUpdate: (keyof UpdateExpenseParams)[] = ["title", "category", "description", "value"];
       
       const someFieldIsNotAllowedToUpdate = Object.keys(body).
         some(key => !allowedFieldsToUpdate.includes(key as keyof UpdateExpenseParams));

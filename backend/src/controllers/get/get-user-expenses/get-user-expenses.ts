@@ -16,7 +16,7 @@ export class GetUserExpensesController implements IController {
       }
 
       if (body) {
-        const allowedFieldsToUpdate: (keyof GetUserExpenseParams)[] = ["category", "description", "expense_date", "start_date", "end_date"];
+        const allowedFieldsToUpdate: (keyof GetUserExpenseParams)[] = ["title", "category", "expense_date", "start_date", "end_date"];
         
         const someFieldIsNotAllowedToUpdate = Object.keys(body).
           some(key => !allowedFieldsToUpdate.includes(key as keyof GetUserExpenseParams));
