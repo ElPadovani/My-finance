@@ -8,9 +8,13 @@ export interface UpdateExpenseParams {
   category?: string;
 };
 
-const updateExpense = async (expenseParams: UpdateExpenseParams): Promise<Response<Expense>> => {
+const updateExpense = async (expenseId: string, expenseParams: UpdateExpenseParams, token: string): Promise<Response<Expense>> => {
   try {
-    const { data } = await api.patch<Expense>("/expenses", expenseParams);
+    const { data } = await api.patch<Expense>(
+      `/expenses/${expenseId}`,
+      expenseParams,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
   
     console.log(data);
 

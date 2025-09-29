@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { useRouter } from "expo-router";
-import { Box, VStack, HStack, Text, Input, InputField, Button, ButtonText, View, Popover, Pressable } from "@gluestack-ui/themed";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { Box, VStack, HStack, Text, Button, ButtonText, View, Pressable } from "@gluestack-ui/themed";
+import { useAuth } from "@/context/AuthContext";
 import { Expense } from "@/api/types";
 import deleteExpense from "@/api/resolvers/expenses/deleteExpense";
-import { useAuth } from "@/context/AuthContext";
 import getUserExpenses, { GetUserExpensesParams } from "@/api/resolvers/expenses/getUserExpenses";
 import ContentModal, { ContentModalState } from "@/components/ContentModal";
 
@@ -87,9 +87,9 @@ export default function Expenses() {
 
   return (
     <>
-      {contentModal.isOpen && <ContentModal modalState={contentModal} setModalState={setContentModal} />}
+      {contentModal.isOpen && <ContentModal modalState={contentModal} setModalState={setContentModal} token={token} />}
     
-      <Box sx={{ flex: 1, p: "$5" }}>
+      <Box sx={{ flex: 1, p: "$5", justifyContent: "space-between" }}>
         {expenses.length > 0 ? (
           <>
             <FlatList
@@ -136,49 +136,50 @@ export default function Expenses() {
                 </Pressable>
               )}
             />
-              
-            <HStack sx={{ marginTop: "$5", gap: "$6", alignItems: "center" }}>
-              <Button 
-                sx={{ 
-                  flex: 1,
-                  backgroundColor: "#5e3f44ff", 
-                  ":active": { opacity: "$50" },
-                  // sombra iOS
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.08, // bem suave
-                  shadowRadius: 6,
-
-                  // sombra Android
-                  elevation: 3,
-                }} 
-                onPress={() => setFilterModal(true)}
-              >
-                <ButtonText>Aplicar Filtros</ButtonText>
-              </Button>
-
-              <Button 
-                sx={{ 
-                  backgroundColor: "#fff",
-                  ":active": { opacity: "$50" } ,
-                  // sombra iOS
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.08, // bem suave
-                  shadowRadius: 6,
-
-                  // sombra Android
-                  elevation: 3,
-                }} 
-                onPress={() => setCreateModal(true)}
-              >
-                <Ionicons name="add-sharp" size={26}/>
-              </Button>
-            </HStack>
           </>
         ) : (
           <Text>Nenhum gasto criado</Text>
         )}
+
+        <HStack sx={{ marginTop: "$5", gap: "$6", alignItems: "center" }}>
+          <Button 
+            sx={{ 
+              flex: 1,
+              backgroundColor: "#5e3f44ff", 
+              ":active": { opacity: "$50" },
+              // sombra iOS
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.08, // bem suave
+              shadowRadius: 6,
+
+              // sombra Android
+              elevation: 3,
+            }} 
+            isDisabled={expenses.length === 0}
+            onPress={() => setFilterModal(true)}
+          >
+            <ButtonText>Aplicar Filtros</ButtonText>
+          </Button>
+
+          <Button 
+            sx={{ 
+              backgroundColor: "#fff",
+              ":active": { opacity: "$50" } ,
+              // sombra iOS
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.08, // bem suave
+              shadowRadius: 6,
+
+              // sombra Android
+              elevation: 3,
+            }} 
+            onPress={() => setCreateModal(true)}
+          >
+            <Ionicons name="add-sharp" size={26}/>
+          </Button>
+        </HStack>
       </Box>
     </>
   );

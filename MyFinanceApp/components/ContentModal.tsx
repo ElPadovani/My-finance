@@ -1,9 +1,11 @@
-import { Expense } from "@/api/types";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
-import { AlertDialog, AlertDialogBackdrop, AlertDialogContent, AlertDialogHeader, AlertDialogCloseButton, AlertDialogBody, Button, Box, Input, InputField, AlertDialogFooter, Text, VStack } from "@gluestack-ui/themed";
+import { KeyboardAvoidingView, Platform } from "react-native";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { useRouter } from "expo-router";
+import { AlertDialog, AlertDialogBackdrop, AlertDialogContent, AlertDialogHeader, AlertDialogCloseButton, AlertDialogBody, Button, Box, Input, InputField, AlertDialogFooter, Text, VStack } from "@gluestack-ui/themed";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { Expense } from "@/api/types";
+import updateExpense, { UpdateExpenseParams } from "@/api/resolvers/expenses/updateExpense";
 import MoneyInput from "./MoneyInput";
-import { UpdateExpenseParams } from "@/api/resolvers/expenses/updateExpense";
 
 export type ContentModalState = {
   isOpen: boolean;
@@ -13,16 +15,19 @@ export type ContentModalState = {
 export type ContentModalProps = {
   setModalState: Dispatch<SetStateAction<ContentModalState>>;
   modalState: ContentModalState;
+  token: string;
 };
 
-export default function ContentModal({ modalState, setModalState }: ContentModalProps) {
-  if (!modalState.isOpen || !modalState.expense) return null;
+export default function ContentModal({ modalState, setModalState, token }: ContentModalProps) {
+  if (!modalState.isOpen) return null;
+  if (!modalState.expense) return null;
+
+  const router= useRouter();
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [expenseInfo, setExpenseInfo] = useState<UpdateExpenseParams>(
-    (({ id, user_id, creation_date, ...rest }) => rest)(modalState.expense)
-  );
+  const [error, setError] = useState("");
+
+  const expenseInfo: Expense = modalState.expense;
 
   const cancelRef = useRef(null);
 
@@ -30,28 +35,26 @@ export default function ContentModal({ modalState, setModalState }: ContentModal
     setModalState(prev => ({ ...prev, isOpen: false }));
   };
 
-  const updateValue = (val: number) => {
-    setExpenseInfo(prev => ({ ...prev, value: val }));
-  }
-
   const handleUpdate = async () => {
-    // setLoading(true);
+    setLoading(true);
 
-    // const response = await deleteExpense(expenseId, token);
+    console.log(expenseInfo);
 
-    // console.log(response);
+    const response = await updateExpense(modalState.expense!.id, expenseInfo, token);
 
-    // if (!response || response.error) {
-    //   setError(response?.error || "Erro inesperado");
-    //   handleClose();
-    //   return;
-    // }
+    console.log(response);
 
-    // if (!response.data) {
-    //   setError("Erro ao alterar informações");
-    //   handleClose();
-    //   return;
-    // }
+    if (!response || response.error) {
+      setError(response?.error || "Erro inesperado");
+      handleClose();
+      return;
+    }
+
+    if (!response.data) {
+      setError("Erro ao alterar informações");
+      handleClose();
+      return;
+    }
 
     setLoading(false);
     // fazer subir toast de conclusao
@@ -81,58 +84,37 @@ export default function ContentModal({ modalState, setModalState }: ContentModal
               <AntDesign name="loading" size={24} color="black" />
             </Box>
           ) : (
-            <VStack sx={{ gap: "$4" }}>
-              <VStack sx={{ gap: "$1" }}>
-                <Text>Título</Text>
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"} // iOS sobe com padding, Android ajusta altura
+              keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} // ajuste se tiver header
+            >
+              <VStack sx={{ gap: "$4" }}>
+                <VStack sx={{ gap: "$1" }}>
+                  <Text sx={{ fontSize: 18, fontWeight: 600 }}>Título</Text>
 
-                <Input>
-                  <InputField
-                    placeholder="Titulo"
-                    value={expenseInfo.title}
-                  //   onChangeText={(text) => {
-                  //     setError("");
-                  //     setUserInfo((prev) => ({ ...prev, name: text }))
-                  //   }}
-                  />
-                </Input>
+                  <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.title}</Text>
+                </VStack>
+
+                <VStack sx={{ gap: "$1" }}>
+                  <Text sx={{ fontSize: 18, fontWeight: 600 }}>Categoria</Text>
+
+                  <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.category}</Text>
+                </VStack>
+
+                <VStack sx={{ gap: "$1" }}>
+                  <Text sx={{ fontSize: 18, fontWeight: 600 }}>Descrição</Text>
+
+                  <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.description}</Text>
+                </VStack>
+
+                <VStack sx={{ gap: "$1" }}>
+                  <Text sx={{ fontSize: 18, fontWeight: 600 }}>Valor</Text>
+
+                  <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</Text>
+                </VStack>
               </VStack>
-
-              <VStack sx={{ gap: "$1" }}>
-                <Text>Categoria</Text>
-
-                <Input>
-                  <InputField
-                    placeholder="Categoria"
-                    value={expenseInfo.category}
-                  //   onChangeText={(text) => {
-                  //     setError("");
-                  //     setUserInfo((prev) => ({ ...prev, name: text }))
-                  //   }}
-                  />
-                </Input>
-              </VStack>
-
-              <VStack sx={{ gap: "$1" }}>
-                <Text>Descrição</Text>
-
-                <Input>
-                  <InputField
-                    placeholder="Descrição"
-                    value={expenseInfo.description}
-                  //   onChangeText={(text) => {
-                  //     setError("");
-                  //     setUserInfo((prev) => ({ ...prev, name: text }))
-                  //   }}
-                  />
-                </Input>
-              </VStack>
-
-              <VStack sx={{ gap: "$1" }}>
-                <Text>Valor</Text>
-
-                <MoneyInput handle={updateValue} initialValue={expenseInfo.value}/>
-              </VStack>
-            </VStack>
+            </KeyboardAvoidingView>
           )}
         </AlertDialogBody>
 
@@ -151,7 +133,16 @@ export default function ContentModal({ modalState, setModalState }: ContentModal
               // sombra Android
               elevation: 3,
             }}
-            onPress={handleUpdate}
+            onPress={() => {
+              router.push({
+                pathname: "/expense",
+                params: { 
+                  ...(({ user_id, creation_date, ...rest }) => rest)(expenseInfo)
+                },
+              });
+
+              handleClose();
+            }}
           >
             <Text color="white">Alterar informações</Text>
           </Button>
