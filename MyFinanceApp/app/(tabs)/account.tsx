@@ -47,7 +47,7 @@ function ChangePassModal({ open, setOpen, handle, error, setError }: ChangePassM
       <AlertDialogBackdrop />
       <AlertDialogContent>
         <AlertDialogHeader>
-          <Text fontWeight="$bold" fontSize="$lg">
+          <Text sx={{ fontFamily: "Poppins_500Medium", fontSize: 20 }}>
             Confirmação
           </Text>
           <AlertDialogCloseButton>
@@ -170,7 +170,7 @@ export default function Config() {
       >
         <Box sx={{ flex: 1, justifyContent: "center", alignItems: "center", p: "$5" }}>
           <VStack sx={{ gap: "$4", width: "100%", maxWidth: 360 }}>
-            <Text sx={{ fontSize: 18, fontWeight: "700" }}>Informações do usuário:</Text>
+            <Text sx={{ fontSize: 18, fontFamily: "Poppins_700Bold" }}>Informações do usuário:</Text>
 
             <Input>
               <InputField

@@ -14,12 +14,6 @@ type ExpenseLocalParams =
 export default function ContentModal() {
   const router = useRouter();
   const { token } = useAuth();
-
-  if (!token) {
-    router.replace("/");
-    return;
-  }
-
   const expense = useLocalSearchParams() as unknown as ExpenseLocalParams;
 
   const [loading, setLoading] = useState(false);
@@ -27,6 +21,11 @@ export default function ContentModal() {
   const [expenseInfo, setExpenseInfo] = useState<UpdateExpenseParams>(
     (({ id, ...rest }) => rest)(expense)
   );
+
+  if (!token) {
+    router.replace("/");
+    return null;
+  }
 
   const updateValue = (val: number) => {
     setExpenseInfo(prev => ({ ...prev, value: val }));
@@ -64,89 +63,83 @@ export default function ContentModal() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"} // iOS sobe com padding, Android ajusta altura
-      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} // ajuste se tiver header
-    >
-      <Box sx={{ flex: 1, p: "$5" }}>
-        <Text fontWeight="$bold" fontSize="$lg">
-          Informações de gasto
-        </Text>
-        
-        <VStack sx={{ flex: 1, justifyContent: "space-between" }}>
-          <VStack sx={{ gap: "$4" }}>
-            <VStack sx={{ gap: "$1" }}>
-              <Text>Título</Text>
+    <Box sx={{ flex: 1, p: "$5" }}>
+      <Text sx={{ fontFamily: "Poppins_700Bold", fontSize: 24, mb: "$4" }}>
+        Informações de gasto
+      </Text>
+      
+      <VStack sx={{ flex: 1, justifyContent: "space-between" }}>
+        <VStack sx={{ gap: "$4" }}>
+          <VStack sx={{ gap: "$1" }}>
+            <Text>Título</Text>
 
-              <Input>
-                <InputField
-                  placeholder="Titulo"
-                  value={expenseInfo.title}
-                //   onChangeText={(text) => {
-                //     setError("");
-                //     setUserInfo((prev) => ({ ...prev, name: text }))
-                //   }}
-                />
-              </Input>
-            </VStack>
+            <Input>
+              <InputField
+                placeholder="Titulo"
+                value={expenseInfo.title}
+              //   onChangeText={(text) => {
+              //     setError("");
+              //     setUserInfo((prev) => ({ ...prev, name: text }))
+              //   }}
+              />
+            </Input>
+          </VStack>
 
-            <VStack sx={{ gap: "$1" }}>
-              <Text>Categoria</Text>
+          <VStack sx={{ gap: "$1" }}>
+            <Text>Categoria</Text>
 
-              <Input>
-                <InputField
-                  placeholder="Categoria"
-                  value={expenseInfo.category}
-                //   onChangeText={(text) => {
-                //     setError("");
-                //     setUserInfo((prev) => ({ ...prev, name: text }))
-                //   }}
-                />
-              </Input>
-            </VStack>
+            <Input>
+              <InputField
+                placeholder="Categoria"
+                value={expenseInfo.category}
+              //   onChangeText={(text) => {
+              //     setError("");
+              //     setUserInfo((prev) => ({ ...prev, name: text }))
+              //   }}
+              />
+            </Input>
+          </VStack>
 
-            <VStack sx={{ gap: "$1" }}>
-              <Text>Descrição</Text>
+          <VStack sx={{ gap: "$1" }}>
+            <Text>Descrição</Text>
 
-              <Input>
-                <InputField
-                  placeholder="Descrição"
-                  value={expenseInfo.description}
-                //   onChangeText={(text) => {
-                //     setError("");
-                //     setUserInfo((prev) => ({ ...prev, name: text }))
-                //   }}
-                />
-              </Input>
-            </VStack>
+            <Input>
+              <InputField
+                placeholder="Descrição"
+                value={expenseInfo.description}
+              //   onChangeText={(text) => {
+              //     setError("");
+              //     setUserInfo((prev) => ({ ...prev, name: text }))
+              //   }}
+              />
+            </Input>
+          </VStack>
 
-            <VStack sx={{ gap: "$1" }}>
-              <Text>Valor</Text>
+          <VStack sx={{ gap: "$1" }}>
+            <Text>Valor</Text>
 
-              <MoneyInput handle={updateValue} initialValue={expenseInfo.value}/>
-            </VStack>
+            <MoneyInput handle={updateValue} initialValue={expenseInfo.value}/>
           </VStack>
         </VStack>
+      </VStack>
 
-          <Button
-            sx={{
-              backgroundColor: "#5e3f44ff", 
-              ":active": { opacity: "$50" },
-              // sombra iOS
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.08, // bem suave
-              shadowRadius: 6,
+      <Button
+        sx={{
+          backgroundColor: "#5e3f44ff", 
+          ":active": { opacity: "$50" },
+          // sombra iOS
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.08, // bem suave
+          shadowRadius: 6,
 
-              // sombra Android
-              elevation: 3,
-            }}
-            onPress={handleUpdate}
-          >
-            <Text color="white">Alterar informações</Text>
-          </Button>
-      </Box>
-    </KeyboardAvoidingView>
+          // sombra Android
+          elevation: 3,
+        }}
+        onPress={handleUpdate}
+      >
+        <Text color="white">Alterar informações</Text>
+      </Button>
+    </Box>
   );
 };

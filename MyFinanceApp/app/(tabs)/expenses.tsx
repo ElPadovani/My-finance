@@ -110,7 +110,7 @@ export default function Expenses() {
                     }}
                   >
                     <Text
-                      sx={{ fontWeight: 600, fontSize: 18 }}
+                      sx={{ fontFamily: "Poppins_600SemiBold", fontSize: 18 }}
                     >
                       {item.title}
                     </Text>
@@ -122,7 +122,7 @@ export default function Expenses() {
                     </Text>
 
                     <Text
-                      sx={{ color: "$green600", fontWeight: 500 }}
+                      sx={{ color: "$green600", fontFamily: "Poppins_600SemiBold" }}
                     >
                       {item.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                     </Text>

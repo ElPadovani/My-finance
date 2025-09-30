@@ -7,7 +7,7 @@ export default function Register() {
   return (
     <Box sx={{ flex: 1, justifyContent: "center", alignItems: "center", p: "$5" }}>
       <VStack sx={{ gap: "$4", width: "100%", maxWidth: 360 }}>
-        <Text sx={{ fontSize: 24, fontWeight: "700" }}>Criar Conta</Text>
+        <Text sx={{ fontSize: 24, fontWeight: "Poppins_700Bold" }}>Criar Conta</Text>
 
         <Input>
           <InputField placeholder="Nome" />

@@ -53,7 +53,7 @@ export default function Login() {
 
       <Box sx={{ flex: 1, justifyContent: "center", alignItems: "center", p: "$5" }}>
         <VStack sx={{ gap: "$4", width: "100%", maxWidth: 360 }}>
-          <Text sx={{ fontSize: 24, fontWeight: "700" }}>Login</Text>
+          <Text sx={{ fontSize: 24, fontFamily: "Poppins_700Bold" }}>Login</Text>
 
           <Input>
             <InputField 

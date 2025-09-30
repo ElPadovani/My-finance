@@ -1,5 +1,6 @@
 import { Stack } from "expo-router";
-import { GluestackUIProvider, StyledProvider, Text, View, HStack, Pressable } from "@gluestack-ui/themed";
+import { GluestackUIProvider } from "@gluestack-ui/themed";
+import { View, Text, Pressable } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { AuthProvider } from "@/context/AuthContext";
@@ -8,15 +9,27 @@ import {
   Poppins_400Regular,
   Poppins_600SemiBold,
   Poppins_700Bold,
+  Poppins_100Thin,
+  Poppins_200ExtraLight,
+  Poppins_300Light,
+  Poppins_500Medium,
+  Poppins_800ExtraBold,
+  Poppins_900Black,
 } from "@expo-google-fonts/poppins";
 import { customConfig } from "@/gluestackConfig";
-import { AntDesign } from "@expo/vector-icons";
+import { FontAwesome5 } from '@expo/vector-icons'
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
+    Poppins_100Thin,
+    Poppins_200ExtraLight,
+    Poppins_300Light,
     Poppins_400Regular,
+    Poppins_500Medium,
     Poppins_600SemiBold,
     Poppins_700Bold,
+    Poppins_800ExtraBold,
+    Poppins_900Black
   });
 
   if (!fontsLoaded) {
@@ -33,7 +46,7 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <StyledProvider config={customConfig}>
+      {/* <StyledProvider config={customConfig}> */}
         <GluestackUIProvider config={customConfig}>
           <AuthProvider>
             <SafeAreaView style={{ flex: 1 }}>
@@ -45,26 +58,27 @@ export default function RootLayout() {
 
                 <Stack.Screen name="expense" options={{
                   header: (props) => (
-                    <HStack
-                      sx={{
+                    <View
+                      style={{
+                        flexDirection: "row",
                         height: 60, // altura fixa tipo Material Design
                         justifyContent: "flex-start",
                         alignItems: "center",
                         paddingHorizontal: 20,
                         paddingTop: 20,
-                        gap: 6
+                        gap: 12
                       }}
                     >
                       <Pressable
                         onPress={() => props.navigation.goBack()}
                       >
-                        <AntDesign name="left" size={14} color="black" />
+                        <FontAwesome5 name="chevron-left" size={22} color="#5e3f44ff" />
                       </Pressable>
 
-                      <Text sx={{ fontFamily: "Poppins_700Bold", fontSize: 26, color: "#5e3f44ff" }}>
+                      <Text style={{ fontFamily: "Poppins_700Bold", fontSize: 26, color: "#5e3f44ff" }}>
                         Gasto
                       </Text>
-                    </HStack>
+                    </View>
                   ),
                 }}/>
 
@@ -73,14 +87,14 @@ export default function RootLayout() {
                   options={{
                     header: () => (
                       <View
-                        sx={{
+                        style={{
                           height: 60, // altura fixa tipo Material Design
                           justifyContent: "center",
                           paddingHorizontal: 20,
                           paddingTop: 20
                         }}
                       >
-                        <Text sx={{ fontFamily: "Poppins_700Bold", fontSize: 26, color: "#5e3f44ff" }}>
+                        <Text style={{ fontFamily: "Poppins_700Bold", fontSize: 26, color: "#5e3f44ff" }}>
                           My Finance
                         </Text>
                       </View>
@@ -91,7 +105,7 @@ export default function RootLayout() {
             </SafeAreaView>
           </AuthProvider>
         </GluestackUIProvider>
-      </StyledProvider>
+      {/* </StyledProvider> */}
     </SafeAreaProvider>
   );
 }

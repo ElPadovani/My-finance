@@ -69,7 +69,7 @@ export default function ContentModal({ modalState, setModalState, token }: Conte
       <AlertDialogBackdrop />
       <AlertDialogContent>
         <AlertDialogHeader>
-          <Text fontWeight="$bold" fontSize="$lg">
+          <Text sx={{ fontFamily: "Poppins_500Medium", fontSize: 20 }}>
             Informações de gasto
           </Text>
           
@@ -91,25 +91,25 @@ export default function ContentModal({ modalState, setModalState, token }: Conte
             >
               <VStack sx={{ gap: "$4" }}>
                 <VStack sx={{ gap: "$1" }}>
-                  <Text sx={{ fontSize: 18, fontWeight: 600 }}>Título</Text>
+                  <Text sx={{ fontSize: 18, fontFamily: "Poppins_600SemiBold" }}>Título</Text>
 
                   <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.title}</Text>
                 </VStack>
 
                 <VStack sx={{ gap: "$1" }}>
-                  <Text sx={{ fontSize: 18, fontWeight: 600 }}>Categoria</Text>
+                  <Text sx={{ fontSize: 18, fontFamily: "Poppins_600SemiBold" }}>Categoria</Text>
 
                   <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.category}</Text>
                 </VStack>
 
                 <VStack sx={{ gap: "$1" }}>
-                  <Text sx={{ fontSize: 18, fontWeight: 600 }}>Descrição</Text>
+                  <Text sx={{ fontSize: 18, fontFamily: "Poppins_600SemiBold" }}>Descrição</Text>
 
                   <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.description}</Text>
                 </VStack>
 
                 <VStack sx={{ gap: "$1" }}>
-                  <Text sx={{ fontSize: 18, fontWeight: 600 }}>Valor</Text>
+                  <Text sx={{ fontSize: 18, fontFamily: "Poppins_600SemiBold" }}>Valor</Text>
 
                   <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</Text>
                 </VStack>
