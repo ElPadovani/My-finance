@@ -6,7 +6,7 @@ import { Box, VStack, HStack, Text, Button, ButtonText, View, Pressable } from "
 import { useAuth } from "@/context/AuthContext";
 import { Expense } from "@/api/types";
 import getUserExpenses, { GetUserExpensesParams } from "@/api/resolvers/expenses/getUserExpenses";
-import ContentModal, { ContentModalState } from "@/components/ContentModal";
+import ExpenseModal, { ExpenseModalState } from "@/components/ExpenseModal";
 
 type Params = Omit<GetUserExpensesParams, "userId">;
 
@@ -15,15 +15,17 @@ export default function Expenses() {
 
   const { user, token } = useAuth();
 
-  if (!user || !token) {
-    router.replace("/");
+  useEffect(() => {
+    if (!token || !user) {
+      router.replace("/");
+    }
+  }, [token, user, router]);
 
-    return;
-  }
+  if (!token || !user) return null;
 
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [params, setParams] = useState<Params>({});
-  const [contentModal, setContentModal] = useState<ContentModalState>({ isOpen: false });
+  const [expenseModal, setExpenseModal] = useState<ExpenseModalState>({ isOpen: false });
   const [filterModal, setFilterModal] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -60,7 +62,7 @@ export default function Expenses() {
 
   return (
     <>
-      <ContentModal modalState={contentModal} setModalState={setContentModal} token={token} />
+      <ExpenseModal modalState={expenseModal} setModalState={setExpenseModal} token={token} />
     
       <Box sx={{ flex: 1, p: "$5", justifyContent: "space-between" }}>
         {expenses.length > 0 ? (
@@ -72,7 +74,7 @@ export default function Expenses() {
               keyExtractor={(item) => item.id}
               ItemSeparatorComponent={() => <View sx={{ height: "$4" }} />}
               renderItem={({ item }) => (
-                <Pressable onPress={() => setContentModal({
+                <Pressable onPress={() => setExpenseModal({
                   isOpen: true,
                   expense: item
                 })}>

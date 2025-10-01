@@ -5,14 +5,14 @@ import { Ionicons, AntDesign } from "@expo/vector-icons";
 import deleteExpense from "@/api/resolvers/expenses/deleteExpense";
 import { Expense } from "@/api/types";
 
-export type ContentModalState = {
+export type ExpenseModalState = {
   isOpen: boolean;
   expense?: Expense;
 };
 
-export type ContentModalProps = {
-  setModalState: Dispatch<SetStateAction<ContentModalState>>;
-  modalState: ContentModalState;
+export type ExpenseModalProps = {
+  setModalState: Dispatch<SetStateAction<ExpenseModalState>>;
+  modalState: ExpenseModalState;
   token: string;
 };
 
@@ -112,7 +112,7 @@ function ConfirmationDeleteModal({ open, setOpen, expenseId, token, router, onCo
   );
 }
 
-export default function ContentModal({ modalState, setModalState, token }: ContentModalProps) {
+export default function ExpenseModal({ modalState, setModalState, token }: ExpenseModalProps) {
   const router= useRouter();
 
   if (!modalState.isOpen) return null;

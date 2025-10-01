@@ -109,11 +109,13 @@ export default function Config() {
 
   const { user, saveLogin, token, loading: loginLoading } = useAuth();
 
-  if (!user || !token) {
-    router.replace("/");
+  useEffect(() => {
+    if (!token || !user) {
+      router.replace("/");
+    }
+  }, [token, user, router]);
 
-    return;
-  };
+  if (!token || !user) return null;
 
   const [openModal, setOpenModal] = useState(false);
   const [userInfo, setUserInfo] = useState(user);
