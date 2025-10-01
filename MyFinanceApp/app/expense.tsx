@@ -29,28 +29,33 @@ export default function ContentModal() {
 
   const updateValue = (val: number) => {
     setExpenseInfo(prev => ({ ...prev, value: val }));
+    setError("");
   }
 
   const handleUpdate = async () => {
-    // setLoading(true);
+    setLoading(true);
 
-    // console.log(expenseInfo);
+    console.log(expenseInfo);
 
-    // const response = await updateExpense(modalState.expense!.id, expenseInfo, token);
+    const response = await updateExpense(expense.id, expenseInfo, token);
 
-    // console.log(response);
+    console.log(response);
 
-    // if (!response || response.error) {
-    //   setError(response?.error || "Erro inesperado");
-    //   return;
-    // }
+    if (!response || response.error) {
+      setError(response?.error || "Erro inesperado");
+      setLoading(false);
+      return;
+    }
 
-    // if (!response.data) {
-    //   setError("Erro ao alterar informações");
-    //   return;
-    // }
+    if (!response.data) {
+      setError("Erro ao alterar informações");
+      setLoading(false);
+      return;
+    }
 
-    // setLoading(false);
+    setLoading(false);
+
+    router.replace("/(tabs)/expenses");
     // // fazer subir toast de conclusao
   };
 
@@ -77,10 +82,10 @@ export default function ContentModal() {
               <InputField
                 placeholder="Titulo"
                 value={expenseInfo.title}
-              //   onChangeText={(text) => {
-              //     setError("");
-              //     setUserInfo((prev) => ({ ...prev, name: text }))
-              //   }}
+                onChangeText={(text) => {
+                  setError("");
+                  setExpenseInfo((prev) => ({ ...prev, title: text }))
+                }}
               />
             </Input>
           </VStack>
@@ -92,10 +97,10 @@ export default function ContentModal() {
               <InputField
                 placeholder="Categoria"
                 value={expenseInfo.category}
-              //   onChangeText={(text) => {
-              //     setError("");
-              //     setUserInfo((prev) => ({ ...prev, name: text }))
-              //   }}
+                onChangeText={(text) => {
+                  setError("");
+                  setExpenseInfo((prev) => ({ ...prev, category: text }))
+                }}
               />
             </Input>
           </VStack>
@@ -107,10 +112,10 @@ export default function ContentModal() {
               <InputField
                 placeholder="Descrição"
                 value={expenseInfo.description}
-              //   onChangeText={(text) => {
-              //     setError("");
-              //     setUserInfo((prev) => ({ ...prev, name: text }))
-              //   }}
+                onChangeText={(text) => {
+                  setError("");
+                  setExpenseInfo((prev) => ({ ...prev, description: text }))
+                }}
               />
             </Input>
           </VStack>
@@ -120,10 +125,16 @@ export default function ContentModal() {
 
             <MoneyInput handle={updateValue} initialValue={expenseInfo.value}/>
           </VStack>
+
+          {error.length > 0 && (
+            <Text sx={{ color: "$red600" }}>{error}</Text>
+          )}
         </VStack>
       </VStack>
 
+
       <Button
+        isDisabled={!!error.length}
         sx={{
           backgroundColor: "#5e3f44ff", 
           ":active": { opacity: "$50" },

@@ -1,9 +1,6 @@
-import { Stack } from "expo-router";
-import { GluestackUIProvider } from "@gluestack-ui/themed";
 import { View, Text, Pressable } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import { AuthProvider } from "@/context/AuthContext";
+import { Stack } from "expo-router";
 import {
   useFonts,
   Poppins_400Regular,
@@ -16,8 +13,12 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from "@expo-google-fonts/poppins";
-import { customConfig } from "@/gluestackConfig";
 import { FontAwesome5 } from '@expo/vector-icons'
+import { GluestackUIProvider } from "@gluestack-ui/themed";
+import { AuthProvider } from "@/context/AuthContext";
+import { customConfig } from "@/gluestackConfig";
+import { useImmersiveMode } from "@/helpers/useImmersiveMode";
+import { StatusBar } from "expo-status-bar";
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -31,6 +32,8 @@ export default function RootLayout() {
     Poppins_800ExtraBold,
     Poppins_900Black
   });
+
+  useImmersiveMode();
 
   if (!fontsLoaded) {
     return (
@@ -46,66 +49,65 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      {/* <StyledProvider config={customConfig}> */}
-        <GluestackUIProvider config={customConfig}>
-          <AuthProvider>
-            <SafeAreaView style={{ flex: 1 }}>
-              <StatusBar style="inverted" backgroundColor="#000" />
-              <Stack>
-                <Stack.Screen name="index" options={{ headerShown: false }} />
+      <GluestackUIProvider config={customConfig}>
+        <AuthProvider>
+          <SafeAreaView style={{ flex: 1 }} edges={['left', 'right']}>
+            <StatusBar hidden />
 
-                <Stack.Screen name="register" options={{ headerShown: false }} />
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
 
-                <Stack.Screen name="expense" options={{
-                  header: (props) => (
+              <Stack.Screen name="register" options={{ headerShown: false }} />
+
+              <Stack.Screen name="expense" options={{
+                header: (props) => (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      height: 60, // altura fixa tipo Material Design
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                      paddingHorizontal: 20,
+                      paddingTop: 20,
+                      gap: 12
+                    }}
+                  >
+                    <Pressable
+                      onPress={() => props.navigation.goBack()}
+                    >
+                      <FontAwesome5 name="chevron-left" size={22} color="#5e3f44ff" />
+                    </Pressable>
+
+                    <Text style={{ fontFamily: "Poppins_700Bold", fontSize: 26, color: "#5e3f44ff" }}>
+                      Gasto
+                    </Text>
+                  </View>
+                ),
+              }}/>
+
+              <Stack.Screen
+                name="(tabs)"
+                options={{
+                  header: () => (
                     <View
                       style={{
-                        flexDirection: "row",
                         height: 60, // altura fixa tipo Material Design
-                        justifyContent: "flex-start",
-                        alignItems: "center",
+                        justifyContent: "center",
                         paddingHorizontal: 20,
-                        paddingTop: 20,
-                        gap: 12
+                        paddingTop: 20
                       }}
                     >
-                      <Pressable
-                        onPress={() => props.navigation.goBack()}
-                      >
-                        <FontAwesome5 name="chevron-left" size={22} color="#5e3f44ff" />
-                      </Pressable>
-
                       <Text style={{ fontFamily: "Poppins_700Bold", fontSize: 26, color: "#5e3f44ff" }}>
-                        Gasto
+                        My Finance
                       </Text>
                     </View>
                   ),
-                }}/>
-
-                <Stack.Screen
-                  name="(tabs)"
-                  options={{
-                    header: () => (
-                      <View
-                        style={{
-                          height: 60, // altura fixa tipo Material Design
-                          justifyContent: "center",
-                          paddingHorizontal: 20,
-                          paddingTop: 20
-                        }}
-                      >
-                        <Text style={{ fontFamily: "Poppins_700Bold", fontSize: 26, color: "#5e3f44ff" }}>
-                          My Finance
-                        </Text>
-                      </View>
-                    ),
-                  }}
-                />
-              </Stack>
-            </SafeAreaView>
-          </AuthProvider>
-        </GluestackUIProvider>
-      {/* </StyledProvider> */}
+                }}
+              />
+            </Stack>
+          </SafeAreaView>
+        </AuthProvider>
+      </GluestackUIProvider>
     </SafeAreaProvider>
   );
 }

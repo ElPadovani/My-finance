@@ -5,8 +5,18 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false, // header já vem do Stack raiz
+        headerShown: false, 
         tabBarActiveTintColor: "#5e3f44ff",
+        tabBarStyle: {
+          height: 80,            // altura da barra
+          paddingVertical: 10,   // garante espaço interno
+        },
+        tabBarLabelStyle: {
+          marginBottom: 8,       // afasta o label pra baixo, centralizando melhor
+        },
+        tabBarIconStyle: {
+          marginTop: 8,          // afasta o ícone pra cima
+        }
       }}
     >
       <Tabs.Screen

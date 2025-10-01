@@ -1,42 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input, InputField } from "@gluestack-ui/themed";
 import { currencyToNumber } from "@/helpers/currencyToNumber";
 
-export function formatCurrency(text: string | number) {
-  if (typeof text === "number") {
-    return text.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
-  }
-
-  // remove caracteres não numéricos
-  const numericValue = text.replace(/\D/g, "");
-
-  if (!numericValue) return "R$ 0,00";
-
-  // divide por 100 para colocar as casas decimais
-  const amount = (Number(numericValue) / 100).toFixed(2);
-
-  // formata para BRL
-  return (
-    "R$ " +
-    amount
-      .replace(".", ",")
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ".") // adiciona separador de milhar
-  );
+type MoneyInputProps = {
+  handle: (val: number) => void;   // valor em REAIS
+  initialValue?: number;           // exemplo: 200 ou 200.5
 };
 
-export default function MoneyInput({ handle, initialValue }: { handle: (val: number) => void, initialValue?: number }) {
+function formatCurrency(n: number) {
+  if (isNaN(n)) return "R$ 0,00";
+  return n.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
 
+function formatCurrencyFromText(text: string) {
+  const onlyDigits = text.replace(/\D/g, "");
+  const amount = Number(onlyDigits || "0") / 100; // aqui sim divide, pq é input cru
+  return formatCurrency(amount);
+}
+
+export default function MoneyInput({ handle, initialValue }: MoneyInputProps) {
   const [value, setValue] = useState(
-    initialValue !== undefined ? formatCurrency(initialValue) : ""
+    initialValue != null ? formatCurrency(parseFloat(initialValue.toString())) : ""
   );
 
+  useEffect(() => {
+    if (initialValue != null) {
+      const normalized = parseFloat(initialValue.toString());
+      setValue(formatCurrency(normalized));
+      handle(normalized);
+    }
+  }, [initialValue, handle]);
+
   function handleChange(text: string) {
-    const formatted = formatCurrency(text);
+    const formatted = formatCurrencyFromText(text);
     setValue(formatted);
-    handle(currencyToNumber(formatted))
+    handle(currencyToNumber(formatted));
   }
 
   return (
