@@ -33,7 +33,7 @@ export default function Login() {
 
     await saveLogin(response.data!.token, response.data!.user);
 
-    router.replace("/(tabs)/expenses");
+    router.push("/(tabs)/expenses");
   };
 
   if (loading) {

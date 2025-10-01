@@ -12,7 +12,11 @@ export type CreateExpenseParams = {
 
 const createExpense = async (expenseParams: CreateExpenseParams, token: string): Promise<Response<Expense>> => {
   try {
-    const { data } = await api.post<Expense>("/expenses", expenseParams);
+    const { data } = await api.post<Expense>(
+      "/expenses", 
+      expenseParams,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
   
     console.log(data);
 

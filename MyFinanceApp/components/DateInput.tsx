@@ -27,6 +27,8 @@ const formatDDMMYYYY = (d: Date | null) => {
   return `${dd}/${mm}/${yyyy}`;
 };
 
+const getTimeOrNull = (d: Date | null) => (d ? d.getTime() : null);
+
 const DateInputModal: React.FC<Props> = ({
   handle,
   initialValue = null,
@@ -35,7 +37,7 @@ const DateInputModal: React.FC<Props> = ({
   maxDate,
   disabled = false,
   locale = "pt-BR",
-  allowClear = false,                 // agora opcional (padrão false)
+  allowClear = false,  // padrão false (opcional)
   title = "Selecionar data",
   confirmText = "Confirmar",
   cancelText = "Cancelar",
@@ -45,10 +47,17 @@ const DateInputModal: React.FC<Props> = ({
   const [tempDate, setTempDate] = useState<Date>(initialValue ?? new Date());
   const inputRef = useRef<TextInput>(null);
 
+  // sincroniza props -> estado, sem setar igual ao que já está
   useEffect(() => {
-    setValue(initialValue ?? null);
-    setTempDate(initialValue ?? new Date());
-  }, [initialValue]);
+    const nextValue = initialValue ?? null;
+    if (getTimeOrNull(nextValue) !== getTimeOrNull(value)) {
+      setValue(nextValue);
+    }
+    const nextTemp = initialValue ?? new Date();
+    if (tempDate.getTime() !== nextTemp.getTime()) {
+      setTempDate(nextTemp);
+    }
+  }, [initialValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const displayText = useMemo(() => formatDDMMYYYY(value), [value]);
 
@@ -61,37 +70,45 @@ const DateInputModal: React.FC<Props> = ({
 
   const close = useCallback(() => setVisible(false), []);
 
-  const confirmIOS = useCallback(() => {
-    let chosen = tempDate;
+  const coerceRange = useCallback((d: Date) => {
+    let chosen = d;
     if (minDate && chosen < minDate) chosen = minDate;
     if (maxDate && chosen > maxDate) chosen = maxDate;
-    setValue(chosen);
-    handle(chosen);
+    return chosen;
+  }, [minDate, maxDate]);
+
+  const confirmIOS = useCallback(() => {
+    const chosen = coerceRange(tempDate);
+    // só envia se mudou
+    if (getTimeOrNull(chosen) !== getTimeOrNull(value)) {
+      setValue(chosen);
+      handle(chosen);
+    }
     close();
-  }, [tempDate, minDate, maxDate, handle, close]);
+  }, [coerceRange, tempDate, value, handle, close]);
 
   const clear = useCallback(() => {
-    setValue(null);
-    handle(null);
-  }, [handle]);
+    if (value !== null) {
+      setValue(null);
+      handle(null);
+    }
+  }, [handle, value]);
 
-  // ANDROID: o próprio componente abre o diálogo nativo
   const onChangeAndroid = (event: DateTimePickerEvent, selected?: Date) => {
     if (event.type === "dismissed") {
       close();
       return;
     }
     if (selected) {
-      let chosen = selected;
-      if (minDate && chosen < minDate) chosen = minDate;
-      if (maxDate && chosen > maxDate) chosen = maxDate;
-      setValue(chosen);
-      handle(chosen);
+      const chosen = coerceRange(selected);
+      if (getTimeOrNull(chosen) !== getTimeOrNull(value)) {
+        setValue(chosen);
+        handle(chosen);
+      }
     }
     close();
   };
 
-  // iOS: atualiza tempDate em tempo real dentro do Modal
   const onChangeIOS = (_event: DateTimePickerEvent, selected?: Date) => {
     if (selected) setTempDate(selected);
   };
@@ -119,7 +136,6 @@ const DateInputModal: React.FC<Props> = ({
       )}
 
       {Platform.OS === "android" ? (
-        // ANDROID: sem Modal próprio — evita sobreposição do seu print
         visible ? (
           <DateTimePicker
             value={tempDate}
@@ -128,16 +144,11 @@ const DateInputModal: React.FC<Props> = ({
             minimumDate={minDate}
             maximumDate={maxDate}
             onChange={onChangeAndroid}
-            // locale={locale}
           />
         ) : null
       ) : (
-        // iOS: Modal com layout gluestack
         <Modal visible={visible} transparent animationType="fade" onRequestClose={close}>
-          <Pressable
-            onPress={close}
-            sx={{ position: "absolute", inset: 0, bg: "rgba(0,0,0,0.45)" }}
-          />
+          <Pressable onPress={close} sx={{ position: "absolute", inset: 0, bg: "rgba(0,0,0,0.45)" }} />
           <Box
             sx={{
               position: "absolute",

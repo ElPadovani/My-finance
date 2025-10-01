@@ -1,22 +1,24 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "expo-router";
 import { Button, Box, Input, InputField, Text, VStack } from "@gluestack-ui/themed";
 import { AntDesign } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
-import { Expense } from "@/api/types";
 import MoneyInput from "@/components/MoneyInput";
 import DateInput from "@/components/DateInput";
 import createExpense, { CreateExpenseParams } from "@/api/resolvers/expenses/createExpense";
 
 
-export default function ContentModal() {
+export default function CreateExpense() {
   const router = useRouter();
   const { token, user } = useAuth();
 
-  if (!token || !user) {
-    router.replace("/");
-    return null;
-  }
+  useEffect(() => {
+    if (!token || !user) {
+      router.replace("/");
+    }
+  }, [token, user, router]);
+
+  if (!token || !user) return null;
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -24,22 +26,22 @@ export default function ContentModal() {
     user_id: user.id, title: "", category: "", description: "", expense_date: "", value: 0
   });
 
-  const handleValue = (val: number) => {
-    setExpenseInfo(prev => ({ ...prev, value: val }));
-    setError("");
-  };
+  const todayRef = useRef(new Date());
 
-  const handleDate = (date: Date | null) => {
-    if (date) {
-      setExpenseInfo(prev => ({...prev, expense_date: date.toString() }));
-      setError("");
-    }
-  };
+  const handleValue = useCallback((val: number) => {
+    setExpenseInfo(prev => (prev.value === val ? prev : { ...prev, value: val }));
+    setError("");
+  }, []);
+
+  const handleDate = useCallback((date: Date | null) => {
+    if (!date) return;
+    const iso = date.toISOString();
+    setExpenseInfo(prev => (prev.expense_date === iso ? prev : { ...prev, expense_date: iso }));
+    setError("");
+  }, []);
 
   const handleUpdate = async () => {
     setLoading(true);
-
-    console.log(expenseInfo);
 
     const response = await createExpense(expenseInfo, token);
 
@@ -59,7 +61,7 @@ export default function ContentModal() {
 
     setLoading(false);
 
-    router.replace("/(tabs)/expenses");
+    router.push("/(tabs)/expenses");
     // // fazer subir toast de conclusao
   };
 
@@ -131,8 +133,8 @@ export default function ContentModal() {
 
             <DateInput 
               handle={handleDate}
-              initialValue={new Date()}
-              maxDate={new Date()}
+              initialValue={todayRef.current}
+              maxDate={todayRef.current}
             />
           </VStack>
 

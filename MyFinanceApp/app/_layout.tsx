@@ -77,7 +77,16 @@ export default function RootLayout() {
                     }}
                   >
                     <Pressable
-                      onPress={() => props.navigation.goBack()}
+                      onPress={() => {
+                        const {navigation} = props;
+                      
+                        if (navigation.canGoBack()) {
+                          navigation.goBack();
+                        } else {
+                          navigation.replace("/(tabs)/expenses")
+                        }
+
+                      }}
                     >
                       <FontAwesome5 name="chevron-left" size={22} color="#5e3f44ff" />
                     </Pressable>
@@ -103,7 +112,16 @@ export default function RootLayout() {
                     }}
                   >
                     <Pressable
-                      onPress={() => props.navigation.goBack()}
+                      onPress={() => {
+                        const {navigation} = props;
+                      
+                        if (navigation.canGoBack()) {
+                          navigation.goBack();
+                        } else {
+                          navigation.replace("/(tabs)/expenses")
+                        }
+
+                      }}
                     >
                       <FontAwesome5 name="chevron-left" size={22} color="#5e3f44ff" />
                     </Pressable>

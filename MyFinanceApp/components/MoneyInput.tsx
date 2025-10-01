@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Input, InputField } from "@gluestack-ui/themed";
-import { currencyToNumber } from "@/helpers/currencyToNumber";
 
 type MoneyInputProps = {
   handle: (val: number) => void;   // valor em REAIS
@@ -9,36 +8,44 @@ type MoneyInputProps = {
 
 function formatCurrency(n: number) {
   if (isNaN(n)) return "R$ 0,00";
-  return n.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
+  return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function digitsToAmount(text: string) {
+  const onlyDigits = text.replace(/\D/g, "");
+  return Number(onlyDigits || "0") / 100;
 }
 
 function formatCurrencyFromText(text: string) {
-  const onlyDigits = text.replace(/\D/g, "");
-  const amount = Number(onlyDigits || "0") / 100; // aqui sim divide, pq é input cru
-  return formatCurrency(amount);
+  return formatCurrency(digitsToAmount(text));
 }
 
-export default function MoneyInput({ handle, initialValue }: MoneyInputProps) {
-  const [value, setValue] = useState(
-    initialValue != null ? formatCurrency(parseFloat(initialValue.toString())) : ""
-  );
+export default function MoneyInput({ handle, initialValue = 0 }: MoneyInputProps) {
+  const [value, setValue] = useState<string>(formatCurrency(initialValue));
 
+  const prevInitial = useRef<number | null>(null);
+  const lastEmitted = useRef<number | null>(null);
+
+  // Sincroniza visual com mudanças externas, sem reemitir para o pai
   useEffect(() => {
-    if (initialValue != null) {
-      const normalized = parseFloat(initialValue.toString());
-      setValue(formatCurrency(normalized));
-      handle(normalized);
+    if (initialValue !== prevInitial.current) {
+      prevInitial.current = initialValue;
+      setValue(formatCurrency(initialValue));
     }
-  }, [initialValue, handle]);
+  }, [initialValue]);
 
-  function handleChange(text: string) {
+  const onChangeText = (text: string) => {
+    // formata ao digitar
     const formatted = formatCurrencyFromText(text);
     setValue(formatted);
-    handle(currencyToNumber(formatted));
-  }
+
+    // emite apenas se o número mudou
+    const numeric = digitsToAmount(text);
+    if (numeric !== lastEmitted.current) {
+      lastEmitted.current = numeric;
+      handle(numeric);
+    }
+  };
 
   return (
     <Input>
@@ -46,7 +53,7 @@ export default function MoneyInput({ handle, initialValue }: MoneyInputProps) {
         keyboardType="numeric"
         placeholder="R$ 0,00"
         value={value}
-        onChangeText={handleChange}
+        onChangeText={onChangeText}
       />
     </Input>
   );

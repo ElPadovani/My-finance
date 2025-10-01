@@ -1,31 +1,36 @@
-import { useState } from "react";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { Button, Box, Input, InputField, Text, VStack } from "@gluestack-ui/themed";
-import { AntDesign } from "@expo/vector-icons";
-import { Expense } from "@/api/types";
+import { useEffect, useState, useRef, SetStateAction, Dispatch } from "react";
+import { Router, useLocalSearchParams, useRouter } from "expo-router";
+import { Button, Box, Input, InputField, Text, VStack, AlertDialog, AlertDialogBackdrop, AlertDialogBody, AlertDialogCloseButton, Portal, AlertDialogContent, AlertDialogFooter, AlertDialogHeader } from "@gluestack-ui/themed";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { Expense as ExpenseType } from "@/api/types";
 import updateExpense, { UpdateExpenseParams } from "@/api/resolvers/expenses/updateExpense";
+import deleteExpense from "@/api/resolvers/expenses/deleteExpense";
 import MoneyInput from "@/components/MoneyInput";
 import { useAuth } from "@/context/AuthContext";
 import DateInput from "@/components/DateInput";
 
 type ExpenseLocalParams = 
-  Pick<Expense, "id" | "title" | "category" | "description" | "value" | "expense_date">;
+  Pick<ExpenseType, "id" | "title" | "category" | "description" | "value" | "expense_date">;
 
-export default function ContentModal() {
+export default function Expense() {
   const router = useRouter();
   const { token } = useAuth();
   const expense = useLocalSearchParams() as unknown as ExpenseLocalParams;
 
+  const [modal, setModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [expenseInfo, setExpenseInfo] = useState<Required<UpdateExpenseParams>>(
     (({ id, ...rest }) => rest)(expense)
   );
 
-  if (!token) {
-    router.replace("/");
-    return null;
-  }
+  useEffect(() => {
+    if (!token) {
+      router.replace("/");
+    }
+  }, [token, router]);
+
+  if (!token) return null;
 
   const handleValue = (val: number) => {
     setExpenseInfo(prev => ({ ...prev, value: val }));
@@ -62,7 +67,7 @@ export default function ContentModal() {
 
     setLoading(false);
 
-    router.replace("/(tabs)/expenses");
+    router.push("/(tabs)/expenses");
     // // fazer subir toast de conclusao
   };
 
@@ -167,6 +172,25 @@ export default function ContentModal() {
         onPress={handleUpdate}
       >
         <Text color="white">Alterar informações</Text>
+      </Button>
+
+      <Button
+        isDisabled={!!error.length}
+        sx={{
+          backgroundColor: "#5e3f44ff", 
+          ":active": { opacity: "$50" },
+          // sombra iOS
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.08, // bem suave
+          shadowRadius: 6,
+
+          // sombra Android
+          elevation: 3,
+        }}
+        onPress={handleUpdate}
+      >
+        <Text color="white">Deletar</Text>
       </Button>
     </Box>
   );

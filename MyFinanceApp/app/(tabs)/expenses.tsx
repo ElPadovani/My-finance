@@ -5,7 +5,6 @@ import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { Box, VStack, HStack, Text, Button, ButtonText, View, Pressable } from "@gluestack-ui/themed";
 import { useAuth } from "@/context/AuthContext";
 import { Expense } from "@/api/types";
-import deleteExpense from "@/api/resolvers/expenses/deleteExpense";
 import getUserExpenses, { GetUserExpensesParams } from "@/api/resolvers/expenses/getUserExpenses";
 import ContentModal, { ContentModalState } from "@/components/ContentModal";
 
@@ -45,31 +44,6 @@ export default function Expenses() {
     }
 
     setExpenses(response.data);
-  };
-
-  const handleDelete = async (expenseId: string) => {
-    setLoading(true);
-
-    const response = await deleteExpense(expenseId, token);
-
-    console.log(response);
-
-    if (!response || response.error) {
-      setError(response?.error || "Erro inesperado");
-      setLoading(false);
-      return;
-    }
-
-    if (!response.data) {
-      setError("Erro ao alterar informações");
-      setLoading(false);
-      return;
-    }
-
-    GetUserExpenses();
-
-    setLoading(false);
-    // fazer subir toast de conclusao
   };
 
   useEffect(() => {
@@ -174,7 +148,7 @@ export default function Expenses() {
               // sombra Android
               elevation: 3,
             }} 
-            onPress={() => router.replace("/createExpense")}
+            onPress={() => router.push("/createExpense")}
           >
             <Ionicons name="add-sharp" size={26}/>
           </Button>

@@ -3,7 +3,7 @@ import Constants from "expo-constants";
 
 export const api = axios.create({
   baseURL: Constants.expoConfig?.extra?.apiUrl ?? "https://my-finance-backend.onrender.com",
-  timeout: 60000,
+  timeout: 100000,
 });
 
 api.interceptors.response.use(
