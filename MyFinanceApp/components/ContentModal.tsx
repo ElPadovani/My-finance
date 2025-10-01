@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useRouter, Router } from "expo-router";
-import { Portal, Box, AlertDialog, AlertDialogBackdrop, AlertDialogContent, AlertDialogHeader, AlertDialogCloseButton, AlertDialogBody, Button, AlertDialogFooter, Text, VStack } from "@gluestack-ui/themed";
+import { Box, AlertDialog, AlertDialogBackdrop, AlertDialogContent, AlertDialogHeader, AlertDialogCloseButton, AlertDialogBody, Button, AlertDialogFooter, Text, VStack } from "@gluestack-ui/themed";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
-import { deleteExpense } from "@/api/resolvers/expenses/deleteExpense";
+import deleteExpense from "@/api/resolvers/expenses/deleteExpense";
 import { Expense } from "@/api/types";
 
 export type ContentModalState = {
@@ -22,9 +22,10 @@ type ConfirmationDeleteModalProps = {
   router: Router;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  onConfirmDelete: () => void;
 }
 
-function ConfirmationDeleteModal({ open, setOpen, expenseId, token, router }: ConfirmationDeleteModalProps) {
+function ConfirmationDeleteModal({ open, setOpen, expenseId, token, router, onConfirmDelete }: ConfirmationDeleteModalProps) {
   const cancelRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
@@ -51,7 +52,7 @@ function ConfirmationDeleteModal({ open, setOpen, expenseId, token, router }: Co
 
     setLoading(false);
 
-    router.push("/(tabs)/expenses");
+    onConfirmDelete()
   };
 
   return (
@@ -91,16 +92,15 @@ function ConfirmationDeleteModal({ open, setOpen, expenseId, token, router }: Co
           sx={{ justifyContent: "space-between" }}
         >
           <Button
-            backgroundColor="red"
             ref={cancelRef}
-            sx={{ width: "45%" }}
+            sx={{ width: "45%", backgroundColor: "transparent", borderColor: "#5e3f44ff", borderWidth: 1 }}
             onPress={() => setOpen(false)}
           >
-            <Text color="white">Cancelar</Text>
+            <Text color="black">Cancelar</Text>
           </Button>
 
           <Button
-            sx={{ width: "45%" }}
+            sx={{ width: "45%", backgroundColor: "#5e3f44ff" }}
             isDisabled={!!error.length}
             onPress={handleDelete}
           >
@@ -127,6 +127,13 @@ export default function ContentModal({ modalState, setModalState, token }: Conte
   const handleClose = () => {
     setModalState(prev => ({ ...prev, isOpen: false }));
   };
+
+  const confirmDelete = () => {
+    router.replace("/(tabs)/expenses");
+    
+    setModal(false);
+    handleClose();
+  }
 
   return (
     <>
@@ -181,65 +188,66 @@ export default function ContentModal({ modalState, setModalState, token }: Conte
             </VStack>
           </AlertDialogBody>
 
-          <AlertDialogFooter sx={{ flexDirection: "column", gap: "$2" }}>
-            <Button
-              sx={{
-                flex: 1,
-                w: "$full",
-                backgroundColor: "#5e3f44ff", 
-                ":active": { opacity: "$50" },
-                // sombra iOS
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.08, // bem suave
-                shadowRadius: 6,
+          <AlertDialogFooter>
+            <VStack sx={{ gap: "$2", w: "$full" }}>
+              <Button
+                sx={{
+                  w: "$full",
+                  backgroundColor: "#5e3f44ff", 
+                  ":active": { opacity: "$50" },
+                  // sombra iOS
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.08, // bem suave
+                  shadowRadius: 6,
 
-                // sombra Android
-                elevation: 3,
-              }}
-              onPress={() => {
-                router.push({
-                  pathname: "/expense",
-                  params: { 
-                    ...(({ user_id, creation_date, ...rest }) => rest)(expenseInfo)
-                  },
-                });
+                  // sombra Android
+                  elevation: 3,
+                }}
+                onPress={() => {
+                  router.push({
+                    pathname: "/expense",
+                    params: { 
+                      ...(({ user_id, creation_date, ...rest }) => rest)(expenseInfo)
+                    },
+                  });
 
-                handleClose();
-              }}
-            >
-              <Text color="white">Alterar informações</Text>
-            </Button>
+                  handleClose();
+                }}
+              >
+                <Text color="white">Alterar informações</Text>
+              </Button>
 
-            <Button
-              sx={{
-                flex: 1,
-                w: "$full",
-                backgroundColor: "red", 
-                ":active": { opacity: "$50" },
-                // sombra iOS
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.08, // bem suave
-                shadowRadius: 6,
+              <Button
+                sx={{
+                  w: "$full",
+                  backgroundColor: "#fff",
+                  borderColor: "#5e3f44ff",
+                  borderWidth: 1,
+                  ":active": { opacity: "$50" },
+                  // sombra iOS
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.08, // bem suave
+                  shadowRadius: 6,
 
-                // sombra Android
-                elevation: 3,
-              }}
-            >
-              <Text color="white">Deletar Gasto</Text>
-            </Button>
+                  // sombra Android
+                  elevation: 3,
+                }}
+                onPress={() => setModal(true)}
+              >
+                <Text color="#5e3f44ff">Deletar Gasto</Text>
+              </Button>
+            </VStack>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
       
-      <Portal>
-        <ConfirmationDeleteModal 
-          open={modal} setOpen={setModal}
-          expenseId={expenseInfo.id} token={token} router={router}
-        />
-      </Portal>
+      <ConfirmationDeleteModal 
+        open={modal} setOpen={setModal} onConfirmDelete={confirmDelete}
+        expenseId={expenseInfo.id} token={token} router={router}
+      />
     </>
   );
 };

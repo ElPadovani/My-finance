@@ -20,13 +20,13 @@ export default function CreateExpense() {
 
   if (!token || !user) return null;
 
+  const todayRef = useRef(new Date());
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [expenseInfo, setExpenseInfo] = useState<CreateExpenseParams>({
-    user_id: user.id, title: "", category: "", description: "", expense_date: "", value: 0
+    user_id: user.id, title: "", category: "", description: "", expense_date: todayRef.current.toString(), value: 0
   });
-
-  const todayRef = useRef(new Date());
 
   const handleValue = useCallback((val: number) => {
     setExpenseInfo(prev => (prev.value === val ? prev : { ...prev, value: val }));
@@ -61,7 +61,7 @@ export default function CreateExpense() {
 
     setLoading(false);
 
-    router.push("/(tabs)/expenses");
+    router.replace("/(tabs)/expenses");
     // // fazer subir toast de conclusao
   };
 

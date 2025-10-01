@@ -85,12 +85,11 @@ function ChangePassModal({ open, setOpen, handle, error, setError }: ChangePassM
           sx={{ justifyContent: "space-between" }}
         >
           <Button
-            backgroundColor="red"
             ref={cancelRef}
-            sx={{ width: "45%" }}
+            sx={{ width: "45%", backgroundColor: "#fff", borderColor: "#5e3f44ff", borderWidth: 1 }}
             onPress={() => setOpen(false)}
           >
-            <Text color="white">Cancelar</Text>
+            <Text color="black">Cancelar</Text>
           </Button>
           <Button
             sx={{ width: "45%" }}

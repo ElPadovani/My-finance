@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FlatList } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { Box, VStack, HStack, Text, Button, ButtonText, View, Pressable } from "@gluestack-ui/themed";
 import { useAuth } from "@/context/AuthContext";
@@ -46,9 +46,9 @@ export default function Expenses() {
     setExpenses(response.data);
   };
 
-  useEffect(() => {
+  useFocusEffect(() => {
     GetUserExpenses();
-  }, []);
+  });
 
   if (loading) {
     return (
@@ -60,7 +60,7 @@ export default function Expenses() {
 
   return (
     <>
-      {contentModal.isOpen && <ContentModal modalState={contentModal} setModalState={setContentModal} token={token} />}
+      <ContentModal modalState={contentModal} setModalState={setContentModal} token={token} />
     
       <Box sx={{ flex: 1, p: "$5", justifyContent: "space-between" }}>
         {expenses.length > 0 ? (
