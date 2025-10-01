@@ -89,6 +89,32 @@ export default function RootLayout() {
                 ),
               }}/>
 
+              <Stack.Screen name="createExpense" options={{
+                header: (props) => (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      height: 60, // altura fixa tipo Material Design
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                      paddingHorizontal: 20,
+                      paddingTop: 20,
+                      gap: 12
+                    }}
+                  >
+                    <Pressable
+                      onPress={() => props.navigation.goBack()}
+                    >
+                      <FontAwesome5 name="chevron-left" size={22} color="#5e3f44ff" />
+                    </Pressable>
+
+                    <Text style={{ fontFamily: "Poppins_700Bold", fontSize: 26, color: "#5e3f44ff" }}>
+                      Criar gasto
+                    </Text>
+                  </View>
+                ),
+              }}/>
+
               <Stack.Screen
                 name="(tabs)"
                 options={{

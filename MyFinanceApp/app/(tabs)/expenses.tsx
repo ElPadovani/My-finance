@@ -24,7 +24,6 @@ export default function Expenses() {
 
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [params, setParams] = useState<Params>({});
-  const [createModal, setCreateModal] = useState(false);
   const [contentModal, setContentModal] = useState<ContentModalState>({ isOpen: false });
   const [filterModal, setFilterModal] = useState(false);
   const [error, setError] = useState("");
@@ -175,7 +174,7 @@ export default function Expenses() {
               // sombra Android
               elevation: 3,
             }} 
-            onPress={() => setCreateModal(true)}
+            onPress={() => router.replace("/createExpense")}
           >
             <Ionicons name="add-sharp" size={26}/>
           </Button>

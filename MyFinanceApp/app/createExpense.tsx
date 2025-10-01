@@ -1,31 +1,28 @@
 import { useState } from "react";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { Button, Box, Input, InputField, Text, VStack } from "@gluestack-ui/themed";
 import { AntDesign } from "@expo/vector-icons";
-import { Expense } from "@/api/types";
-import updateExpense, { UpdateExpenseParams } from "@/api/resolvers/expenses/updateExpense";
-import MoneyInput from "@/components/MoneyInput";
 import { useAuth } from "@/context/AuthContext";
+import { Expense } from "@/api/types";
+import MoneyInput from "@/components/MoneyInput";
 import DateInput from "@/components/DateInput";
+import createExpense, { CreateExpenseParams } from "@/api/resolvers/expenses/createExpense";
 
-type ExpenseLocalParams = 
-  Pick<Expense, "id" | "title" | "category" | "description" | "value" | "expense_date">;
 
 export default function ContentModal() {
   const router = useRouter();
-  const { token } = useAuth();
-  const expense = useLocalSearchParams() as unknown as ExpenseLocalParams;
+  const { token, user } = useAuth();
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [expenseInfo, setExpenseInfo] = useState<Required<UpdateExpenseParams>>(
-    (({ id, ...rest }) => rest)(expense)
-  );
-
-  if (!token) {
+  if (!token || !user) {
     router.replace("/");
     return null;
   }
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [expenseInfo, setExpenseInfo] = useState<CreateExpenseParams>({
+    user_id: user.id, title: "", category: "", description: "", expense_date: "", value: 0
+  });
 
   const handleValue = (val: number) => {
     setExpenseInfo(prev => ({ ...prev, value: val }));
@@ -44,7 +41,7 @@ export default function ContentModal() {
 
     console.log(expenseInfo);
 
-    const response = await updateExpense(expense.id, expenseInfo, token);
+    const response = await createExpense(expenseInfo, token);
 
     console.log(response);
 
@@ -76,10 +73,6 @@ export default function ContentModal() {
 
   return (
     <Box sx={{ flex: 1, p: "$5" }}>
-      <Text sx={{ fontFamily: "Poppins_700Bold", fontSize: 24, mb: "$4" }}>
-        Informações de gasto
-      </Text>
-      
       <VStack sx={{ flex: 1, justifyContent: "space-between" }}>
         <VStack sx={{ gap: "$4" }}>
           <VStack sx={{ gap: "$1" }}>
@@ -138,7 +131,7 @@ export default function ContentModal() {
 
             <DateInput 
               handle={handleDate}
-              initialValue={new Date(expenseInfo.expense_date)}
+              initialValue={new Date()}
               maxDate={new Date()}
             />
           </VStack>
@@ -166,7 +159,7 @@ export default function ContentModal() {
         }}
         onPress={handleUpdate}
       >
-        <Text color="white">Alterar informações</Text>
+        <Text color="white">Adicionar</Text>
       </Button>
     </Box>
   );
