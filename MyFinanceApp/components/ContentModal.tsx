@@ -24,40 +24,12 @@ export default function ContentModal({ modalState, setModalState, token }: Conte
 
   const router= useRouter();
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
   const expenseInfo: Expense = modalState.expense;
 
   const cancelRef = useRef(null);
 
   const handleClose = () => {
     setModalState(prev => ({ ...prev, isOpen: false }));
-  };
-
-  const handleUpdate = async () => {
-    setLoading(true);
-
-    console.log(expenseInfo);
-
-    const response = await updateExpense(modalState.expense!.id, expenseInfo, token);
-
-    console.log(response);
-
-    if (!response || response.error) {
-      setError(response?.error || "Erro inesperado");
-      handleClose();
-      return;
-    }
-
-    if (!response.data) {
-      setError("Erro ao alterar informações");
-      handleClose();
-      return;
-    }
-
-    setLoading(false);
-    // fazer subir toast de conclusao
   };
 
   return (
@@ -79,43 +51,37 @@ export default function ContentModal({ modalState, setModalState, token }: Conte
         </AlertDialogHeader>
 
         <AlertDialogBody>
-          {loading ? (
-            <Box sx={{ flex: 1, justifyContent: "center", alignItems: "center", p: "$5" }}>
-              <AntDesign name="loading" size={24} color="black" />
-            </Box>
-          ) : (
-            <KeyboardAvoidingView
-              style={{ flex: 1 }}
-              behavior={Platform.OS === "ios" ? "padding" : "height"} // iOS sobe com padding, Android ajusta altura
-              keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} // ajuste se tiver header
-            >
-              <VStack sx={{ gap: "$4" }}>
-                <VStack sx={{ gap: "$1" }}>
-                  <Text sx={{ fontSize: 18, fontFamily: "Poppins_600SemiBold" }}>Título</Text>
+          <VStack sx={{ gap: "$4" }}>
+            <VStack sx={{ gap: "$1" }}>
+              <Text sx={{ fontSize: 18, fontFamily: "Poppins_600SemiBold" }}>Título</Text>
 
-                  <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.title}</Text>
-                </VStack>
+              <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.title}</Text>
+            </VStack>
 
-                <VStack sx={{ gap: "$1" }}>
-                  <Text sx={{ fontSize: 18, fontFamily: "Poppins_600SemiBold" }}>Categoria</Text>
+            <VStack sx={{ gap: "$1" }}>
+              <Text sx={{ fontSize: 18, fontFamily: "Poppins_600SemiBold" }}>Categoria</Text>
 
-                  <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.category}</Text>
-                </VStack>
+              <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.category}</Text>
+            </VStack>
 
-                <VStack sx={{ gap: "$1" }}>
-                  <Text sx={{ fontSize: 18, fontFamily: "Poppins_600SemiBold" }}>Descrição</Text>
+            <VStack sx={{ gap: "$1" }}>
+              <Text sx={{ fontSize: 18, fontFamily: "Poppins_600SemiBold" }}>Descrição</Text>
 
-                  <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.description}</Text>
-                </VStack>
+              <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.description}</Text>
+            </VStack>
 
-                <VStack sx={{ gap: "$1" }}>
-                  <Text sx={{ fontSize: 18, fontFamily: "Poppins_600SemiBold" }}>Valor</Text>
+            <VStack sx={{ gap: "$1" }}>
+              <Text sx={{ fontSize: 18, fontFamily: "Poppins_600SemiBold" }}>Valor</Text>
 
-                  <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</Text>
-                </VStack>
-              </VStack>
-            </KeyboardAvoidingView>
-          )}
+              <Text sx={{ fontSize: 14, pl: "$2" }}>{expenseInfo.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</Text>
+            </VStack>
+
+            <VStack sx={{ gap: "$1" }}>
+              <Text sx={{ fontSize: 18, fontFamily: "Poppins_600SemiBold" }}>Data</Text>
+
+              <Text sx={{ fontSize: 14, pl: "$2" }}>{new Date(expenseInfo.expense_date).toLocaleDateString("pt-BR")}</Text>
+            </VStack>
+          </VStack>
         </AlertDialogBody>
 
         <AlertDialogFooter>

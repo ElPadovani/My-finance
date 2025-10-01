@@ -130,7 +130,7 @@ export default function Expenses() {
                     <Text
                       sx={{ color: "$warmGray400", fontSize: 12 }}
                     >
-                      Data: {new Date(item.expense_date).toLocaleDateString("pt-BR")}
+                      {new Date(item.expense_date).toLocaleDateString("pt-BR")}
                     </Text>
                   </VStack>
                 </Pressable>

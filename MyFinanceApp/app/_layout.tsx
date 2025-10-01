@@ -17,8 +17,9 @@ import { FontAwesome5 } from '@expo/vector-icons'
 import { GluestackUIProvider } from "@gluestack-ui/themed";
 import { AuthProvider } from "@/context/AuthContext";
 import { customConfig } from "@/gluestackConfig";
-import { useImmersiveMode } from "@/helpers/useImmersiveMode";
+import * as NavigationBar from "expo-navigation-bar";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -33,7 +34,10 @@ export default function RootLayout() {
     Poppins_900Black
   });
 
-  useImmersiveMode();
+  useEffect(() => {
+    // NavigationBar escondida (a parte que funciona em edge-to-edge)
+    NavigationBar.setVisibilityAsync("hidden");
+  }, []);
 
   if (!fontsLoaded) {
     return (
@@ -51,8 +55,8 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <GluestackUIProvider config={customConfig}>
         <AuthProvider>
-          <SafeAreaView style={{ flex: 1 }} edges={['left', 'right']}>
-            <StatusBar hidden />
+          <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
+            <StatusBar translucent style="inverted" backgroundColor="transparent" />
 
             <Stack>
               <Stack.Screen name="index" options={{ headerShown: false }} />

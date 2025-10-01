@@ -7,6 +7,7 @@ import { Expense } from "@/api/types";
 import updateExpense, { UpdateExpenseParams } from "@/api/resolvers/expenses/updateExpense";
 import MoneyInput from "@/components/MoneyInput";
 import { useAuth } from "@/context/AuthContext";
+import DateInput from "@/components/DateInput";
 
 type ExpenseLocalParams = 
   Pick<Expense, "id" | "title" | "category" | "description" | "value" | "expense_date">;
@@ -18,7 +19,7 @@ export default function ContentModal() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [expenseInfo, setExpenseInfo] = useState<UpdateExpenseParams>(
+  const [expenseInfo, setExpenseInfo] = useState<Required<UpdateExpenseParams>>(
     (({ id, ...rest }) => rest)(expense)
   );
 
@@ -27,10 +28,17 @@ export default function ContentModal() {
     return null;
   }
 
-  const updateValue = (val: number) => {
+  const handleValue = (val: number) => {
     setExpenseInfo(prev => ({ ...prev, value: val }));
     setError("");
-  }
+  };
+
+  const handleDate = (date: Date | null) => {
+    if (date) {
+      setExpenseInfo(prev => ({...prev, expense_date: date.toString() }));
+      setError("");
+    }
+  };
 
   const handleUpdate = async () => {
     setLoading(true);
@@ -123,7 +131,17 @@ export default function ContentModal() {
           <VStack sx={{ gap: "$1" }}>
             <Text>Valor</Text>
 
-            <MoneyInput handle={updateValue} initialValue={expenseInfo.value}/>
+            <MoneyInput handle={handleValue} initialValue={expenseInfo.value}/>
+          </VStack>
+
+          <VStack sx={{ gap: "$1" }}>
+            <Text>Data</Text>
+
+            <DateInput 
+              handle={handleDate}
+              initialValue={new Date(expenseInfo.expense_date)}
+              maxDate={new Date()}
+            />
           </VStack>
 
           {error.length > 0 && (
