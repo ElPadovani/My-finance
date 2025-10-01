@@ -5,7 +5,7 @@ export type GetUserExpensesParams = {
   userId: string;
   title?: string
   category?: string;
-  expense_date?: Date;
+  expense_date?: string;
   start_date?: string;
   end_date?: string;
 };

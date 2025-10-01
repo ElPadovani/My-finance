@@ -8,7 +8,7 @@ import { Expense } from "@/api/types";
 import getUserExpenses, { GetUserExpensesParams } from "@/api/resolvers/expenses/getUserExpenses";
 import ExpenseModal, { ExpenseModalState } from "@/components/ExpenseModal";
 
-type Params = Omit<GetUserExpensesParams, "userId">;
+export type Params = Omit<GetUserExpensesParams, "userId">;
 
 export default function Expenses() {
   const router = useRouter();
