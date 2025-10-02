@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import { GetUserExpenseParams, IGetUserExpenseRepository } from "../../../controllers/get/get-user-expenses/protocols";
 import { MongoClient } from "../../../database/mongo";
 import { Expense } from "../../../models/expense";
@@ -11,7 +10,7 @@ export class MongoGetUserExpenseRepository implements IGetUserExpenseRepository 
     };
 
     if (expenseParams?.title) {
-      query.description = { $regex: expenseParams.title, $options: "i" };
+      query.title = { $regex: expenseParams.title, $options: "i" };
     }
 
     if (expenseParams?.category) {
