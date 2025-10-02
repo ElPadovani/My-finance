@@ -32,23 +32,31 @@ export default function Expenses() {
   const [loading, setLoading] = useState(false);
 
   const GetUserExpenses = async () => {
+    setLoading(true);
+
     console.log(params);
 
     const response = await getUserExpenses({ userId: user.id, ...params }, token);
+
+    let anyError = false;
 
     console.log(response)
 
     if (!response || response.error) {
       setError(response?.error || "Erro inesperado");
-      return;
+      anyError = true;
     }
 
     if (!response.data) {
       setError("Erro ao buscar gastos.");
-      return;
+      anyError = true;
     }
 
-    setExpenses(response.data);
+    setLoading(false)
+
+    if (anyError) return;
+
+    setExpenses(response.data!);
   };
 
   const load = useCallback(() => {
@@ -148,10 +156,10 @@ export default function Expenses() {
               // sombra Android
               elevation: 3,
             }} 
-            isDisabled={expenses.length === 0}
+            isDisabled={(Object.keys(params).length === 0 && expenses.length === 0)}
             onPress={() => setFilterModal(true)}
           >
-            <ButtonText>Aplicar Filtros</ButtonText>
+            <ButtonText>Filtros</ButtonText>
           </Button>
 
           <Button 
