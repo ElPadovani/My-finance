@@ -31,6 +31,8 @@ router.post("/expenses/:userId", authMiddleware, async (req, res) => {
 
   const { body, statusCode } = await getUserExpensesController.handle({ body: req.body, params: req.params });
 
+  console.log(statusCode);
+
   res.status(statusCode).send(body);
 });
 
