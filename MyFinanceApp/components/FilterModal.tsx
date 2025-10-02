@@ -1,9 +1,8 @@
 import { Params } from "@/app/(tabs)/expenses";
 import { Ionicons } from "@expo/vector-icons";
-import { Text, Button, AlertDialog, AlertDialogBackdrop, AlertDialogContent, AlertDialogHeader, AlertDialogCloseButton, AlertDialogBody, VStack, AlertDialogFooter, Input, InputField } from "@gluestack-ui/themed";
-import { useRouter } from "expo-router";
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
-import DateInput from "./DateInput";
+import { Text, Button, AlertDialog, AlertDialogBackdrop, AlertDialogContent, AlertDialogHeader, AlertDialogCloseButton, AlertDialogBody, VStack, AlertDialogFooter, Input, InputField, HStack } from "@gluestack-ui/themed";
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import DateInput, { DateInputHandle } from "./DateInput";
 
 type FilterModalProps = {
   params: Params;
@@ -13,31 +12,57 @@ type FilterModalProps = {
 }
 
 export default function FilterModal({ params: paramsFinal, setParams: setParamsFinal, open, setOpen }: FilterModalProps) {
-  const router= useRouter();
-
   if (!open) return null;
 
   const cancelRef = useRef(null);
   const todayRef = useRef(new Date());
 
   const [params, setParams] = useState(paramsFinal);
+  const [disableRange, setDisableRange] = useState(false);
+  const [disableExpense, setDisableExpense] = useState(false);
+  const [error, setError] = useState("");
+
+  const expenseRef = useRef<DateInputHandle>(null);
+  const startRef = useRef<DateInputHandle>(null);
+  const endRef = useRef<DateInputHandle>(null);
+
+  const handleDisableRange = (date: Date | null) => {
+    if (date) {
+      // escolheu data única → limpar range e desabilitar
+      startRef.current?.clear();
+      endRef.current?.clear();
+      setDisableRange(true);
+    } else {
+      setDisableRange(false);
+    }
+  }
+
+  const handleDisableExpense = (date: Date | null) => {
+    if (date) {
+      // escolheu data única → limpar range e desabilitar
+      expenseRef.current?.clear();
+      setDisableExpense(true);
+    } else {
+      setDisableExpense(false);
+    }
+  }
 
   const handleExpense = (date: Date | null) => {
-    if (!date) return;
-    
-    setParams(prev => ({ ...prev, expense_date: date ? date.toString() : undefined }));
+    setParams(prev => ({ ...prev, expense_date: date ? date.toISOString() : undefined }));
+    handleDisableRange(date);
+    setError("");
   }
 
   const handleStart = (date: Date | null) => {
-    if (!date) return;
-    
-    setParams(prev => ({ ...prev, start_date: date ? date.toString() : undefined }));
+    setParams(prev => ({ ...prev, start_date: date ? date.toISOString() : undefined }));
+    handleDisableExpense(date);
+    setError("");
   }
 
   const handleEnd = (date: Date | null) => {
-    if (!date) return;
-    
-    setParams(prev => ({ ...prev, end_date: date ? date.toString() : undefined }));
+    setParams(prev => ({ ...prev, end_date: date ? date.toISOString() : undefined }));
+    handleDisableExpense(date);
+    setError("");
   }
 
   const handleClose = () => setOpen(false);
@@ -91,15 +116,45 @@ export default function FilterModal({ params: paramsFinal, setParams: setParamsF
                 </Input>
               </VStack>
 
-              <VStack sx={{ gap: "$1" }}>
+              <VStack sx={{ gap: "$1", ...(disableExpense ? { opacity: "$50" } : {}) }}>
                 <Text>Data do gasto</Text>
 
                 <DateInput 
-                  handle={}
-                  initialValue={todayRef.current}
+                  ref={expenseRef}
+                  handle={handleExpense}
+                  initialValue={params.expense_date ? new Date(params.expense_date) : null}
                   maxDate={todayRef.current}
+                  allowClear
                 />
               </VStack>
+
+              <VStack sx={{ gap: "$1", ...(disableRange ? { opacity: "$50" } : {}) }}>
+                <Text>Data inicial</Text>
+
+                <DateInput 
+                  ref={startRef}
+                  handle={handleStart}
+                  initialValue={params.start_date ? new Date(params.start_date) : null}
+                  maxDate={todayRef.current}
+                  allowClear
+                />
+              </VStack>
+
+              <VStack sx={{ gap: "$1", ...(disableRange ? { opacity: "$50" } : {}) }}>
+                <Text>Data final</Text>
+
+                <DateInput 
+                  ref={endRef}
+                  handle={handleEnd}
+                  initialValue={params.end_date ? new Date(params.end_date) : null}
+                  maxDate={todayRef.current}
+                  allowClear
+                />
+              </VStack>
+
+              {error.length > 0 && (
+                <Text sx={{ color: "$red600" }}>{error}</Text>
+              )}
             </VStack>
           </AlertDialogBody>
 
@@ -120,12 +175,28 @@ export default function FilterModal({ params: paramsFinal, setParams: setParamsF
                   elevation: 3,
                 }}
                 onPress={() => {
-                  setP
+                  if (params.start_date || params.end_date) {
+                    if (!params.start_date) {
+                      setError("Preencha a data inicial");
+                      return;
+                    }
+
+                    if (!params.end_date) {
+                      setError("Preencha a data final");
+                      return;
+                    }
+                  } 
+                  
+                  const cleanedParams: Params = Object.fromEntries(
+                    Object.entries(params).filter(([__, value]) => (value !== undefined && (value as string).length))
+                  );
+
+                  setParamsFinal(cleanedParams);
 
                   handleClose();
                 }}
               >
-                <Text color="white">Alterar informações</Text>
+                <Text color="white">Aplicar filtros</Text>
               </Button>
             </VStack>
           </AlertDialogFooter>

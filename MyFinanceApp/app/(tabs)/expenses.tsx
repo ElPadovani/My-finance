@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Expense } from "@/api/types";
 import getUserExpenses, { GetUserExpensesParams } from "@/api/resolvers/expenses/getUserExpenses";
 import ExpenseModal, { ExpenseModalState } from "@/components/ExpenseModal";
+import FilterModal from "@/components/FilterModal";
 
 export type Params = Omit<GetUserExpensesParams, "userId">;
 
@@ -31,9 +32,11 @@ export default function Expenses() {
   const [loading, setLoading] = useState(false);
 
   const GetUserExpenses = async () => {
+    console.log(params);
+
     const response = await getUserExpenses({ userId: user.id, ...params }, token);
 
-    console.log(response);
+    console.log(response)
 
     if (!response || response.error) {
       setError(response?.error || "Erro inesperado");
@@ -48,9 +51,17 @@ export default function Expenses() {
     setExpenses(response.data);
   };
 
-  useFocusEffect(() => {
+  const load = useCallback(() => {
     GetUserExpenses();
-  });
+  }, []);
+
+  useFocusEffect(load);
+
+  useEffect(() => {
+    if (Object(params).length === 0) return;
+
+    GetUserExpenses();
+  }, [params]);
 
   if (loading) {
     return (
@@ -62,6 +73,8 @@ export default function Expenses() {
 
   return (
     <>
+      <FilterModal open={filterModal} setOpen={setFilterModal} params={params} setParams={setParams} />
+
       <ExpenseModal modalState={expenseModal} setModalState={setExpenseModal} token={token} />
     
       <Box sx={{ flex: 1, p: "$5", justifyContent: "space-between" }}>
@@ -114,6 +127,10 @@ export default function Expenses() {
           </>
         ) : (
           <Text>Nenhum gasto criado</Text>
+        )}
+
+        {error.length > 0 && (
+          <Text sx={{ color: "$red600" }}>{error}</Text>
         )}
 
         <HStack sx={{ marginTop: "$5", gap: "$6", alignItems: "center" }}>

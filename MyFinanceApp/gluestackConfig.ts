@@ -10,4 +10,14 @@ export const customConfig = {
       mono: "Poppins_600SemiBold",
     },
   },
+  components: {
+    ...defaultConfig.components,
+    Input: {
+      ...defaultConfig.components?.Input,
+      theme: {
+        ...defaultConfig.components?.Input?.theme,
+        ":focus": { borderColor: "#5e3f44ff" }
+      }
+    }
+  }
 };

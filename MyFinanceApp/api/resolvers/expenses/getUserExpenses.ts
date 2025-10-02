@@ -18,8 +18,6 @@ const getUserExpenses = async (params: GetUserExpensesParams, token: string): Pr
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    console.log(data);
-
     return { data };
   } catch (error: any) {
     console.error(`Erro de status ${error.status}: ${error.mensagem}`);
